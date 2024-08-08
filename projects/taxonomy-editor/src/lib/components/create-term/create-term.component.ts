@@ -56,6 +56,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
   previousTermCode:string = '';
   previousCatCode:string = '';
   previousTermCatCode:string=''
+  selectedTermArray: any= []
 
 
   constructor(
@@ -458,7 +459,12 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
             counter++
             
             if(counter === themeFields.length){
-              this.updateTermAssociationsMulti(createdTerms)
+
+
+              const parentColumn = this.frameWorkService.getPreviousCategory(this.data.columnInfo.code)
+              let parentCol: any = this.frameWorkService.selectionList.get(parentColumn.code)
+              this.updateTermAssociationsMultiV2(createdTerms , parentCol)
+              // this.updateTermAssociationsMulti(createdTerms)
               // this.dialogClose({ term: createdTerms, created: true, multi:true })
             }
           })
@@ -781,9 +787,8 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
   }
 
   updateTermData(form, data) {
-    const additionalProperties = {
-      displayName: this.createThemeForm.value.dname,
-    }
+    let additionalProperties =  data.childrenData.additionalProperties
+    additionalProperties['displayName'] = this.createThemeForm.value.dname
     form.value.additionalProperties = additionalProperties
     
     form.value.displayName = form.value.dname
@@ -947,6 +952,142 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
     this.frameWorkService.publishFramework().subscribe(res => {
       this.dialogRef.close(term)
     });
+  }
+
+
+  async updateTermAssociationsMultiV2(createdTerms: any[], parentSelectedTerm?:any) {
+   
+    this.selectedTermArray = []
+    let createdTermsCounter = 0
+    let createdTermsIdentifiers = []
+    this.selectedTermArray = createdTerms
+    this.selectedTerm = createdTerms[createdTerms.length -1]
+    for(let createdTerm of createdTerms) {
+      createdTermsIdentifiers.push({ identifier: createdTerm.identifier })
+    }
+    let associations = []
+    let counter = 0
+   if(createdTerms && createdTerms.length) {
+      let parent
+     let createdTermsCounter = 0
+     if(!parentSelectedTerm) {
+      for(let createdTerm of createdTerms) {
+        this.selectedTerm = createdTerm
+        let temp
+        for(const [key, value] of this.frameWorkService.selectionList){
+           parent = value
+          counter++
+          temp = parent.children ? parent.children.filter(child => child.identifier === this.selectedTerm.identifier) : null
+          associations = parent.children ? parent.children.map(c => {
+            // return { identifier: c.identifier, approvalStatus: c.associationProperties?c.associationProperties.approvalStatus: 'Draft' }
+            return c.identifier ?  { identifier: c.identifier } : null
+          }) : []
+          if (temp && temp.length) {
+            this.isTermExist = true
+            return
+          } else {
+              associations.push({ identifier: this.selectedTerm.identifier })
+              this.isTermExist = false
+              // if(createdTermsCounter === (createdTerms.length-1)) {
+                const reguestBody = {
+                  request: {
+                    term: {
+                      ...(associations && associations.length) ? {associations: [...associations]} : null,
+                    }
+                  }
+                }
+                // this.dialogClose({ term: this.selectedTerm, created: true })
+                await this.callUpdateAssociations(counter, parent, reguestBody)
+                
+              // }
+          }
+        }
+        createdTermsCounter++
+        if(createdTermsCounter === createdTerms.length) {
+          this.frameWorkService.updateFrameworkList(this.data.columnInfo.code, parent, createdTerms )
+          this.dialogClose({ term: [this.selectedTerm], created: true, multi:true })
+          this.disableMultiCreate =false;
+          if(createdTerms[0].category === 'theme'){
+            this._snackBar.open(`Competency ${createdTerms[0].category} created successfully.`)
+          }
+          if(createdTerms[0].category === 'subtheme'){
+            this._snackBar.open(`Competency ${createdTerms[0].category} created successfully.`)
+          }
+        }
+      }
+     } else {
+      const parent = parentSelectedTerm
+      associations = parent.children ? parent.children.map(c => {
+        return c.identifier ?  { identifier: c.identifier } : null
+      }) : []
+        associations = [...associations, ...createdTermsIdentifiers]
+        this.isTermExist = false
+        const reguestBody = {
+          request: {
+            term: {
+              ...(associations && associations.length) ? {associations: [...associations]} : null,
+            }
+          }
+        }
+        await this.callUpdateAssociationsV2(counter, parent, reguestBody)
+
+          this.frameWorkService.updateFrameworkList(this.data.columnInfo.code, parent, createdTerms )
+          this.dialogClose({ term: this.selectedTermArray, created: true, multi:true })
+          this.disableMultiCreate =false;
+          if(createdTerms[0].category === 'theme'){
+            this._snackBar.open(`Competency ${createdTerms[0].category} created successfully.`)
+          }
+          if(createdTerms[0].category === 'subtheme'){
+            this._snackBar.open(`Competency ${createdTerms[0].category} created successfully.`)
+          }
+     }
+   }
+ }
+
+ async callUpdateAssociationsV2(counter, parent, reguestBody ): Promise<any>{
+   return new Promise((resolve) => {
+    this.frameWorkService.updateTerm(this.data.frameworkId, parent.category, parent.code, reguestBody).subscribe(async (res: any) => {
+      parent['children'] = parent && parent.children ?[...parent.children, ...this.selectedTermArray]:this.selectedTermArray
+        let listData : any = this.frameWorkService.list.get(this.data.columnInfo.code)
+        let differenceData = []
+        if(listData && listData.children && listData.children.length) {
+          differenceData  = _.differenceBy(this.selectedTermArray,listData.children, 'identifier');
+        } else {
+          differenceData = this.selectedTermArray
+        }
+        listData['associations'] = listData && listData.associations ?[...listData.associations, ...differenceData]:differenceData
+        listData['children'] = listData && listData.children ?[...listData.children, ...differenceData]:differenceData
+
+        this.frameWorkService.selectionList.forEach((selectedData: any)=> {
+          let listData : any = this.frameWorkService.list.get(selectedData.category)
+          if(listData && listData.children && listData.children.length) {
+            this.frameWorkService.updateLocalList(listData,parent, this.selectedTermArray, 'create')
+          }
+        }) 
+       if (counter === this.frameWorkService.selectionList.size) {
+         // this.selectedTerm['associationProperties']['approvalStatus'] = 'Draft';
+ 
+         // this value is for selected term in case of create scenario, in case of edit scenario this won't be avaiable 
+         // so term is set from childdata which is received from params in updateData
+         const value = (this.selectedTerm && this.selectedTerm.identifier) ? this.selectedTerm : {}
+         const found = parent.children ? parent.children.find(c=> c.identifier === this.selectedTerm.identifier) : false
+         // if(!found) {
+         //   parent.children ? parent.children.push(this.selectedTerm) : parent['children'] = [this.selectedTerm]
+         // }
+         this.disableUpdate = false
+         // this.frameWorkService.publishFramework().subscribe(res => {
+         //   // this.dialogRef.close(term)
+         //   console.log('published')
+         //   return resolve(true)
+         // });
+         resolve(true)
+       } else {
+         return resolve(true)
+       }
+     }, (err: any) => {
+       console.error(`Edit ${this.data.columnInfo.name} failed, please try again later`)
+     })
+   })
   }
 
 }
