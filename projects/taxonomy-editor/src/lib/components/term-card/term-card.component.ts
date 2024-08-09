@@ -148,7 +148,7 @@ export class TermCardComponent implements OnInit, OnDestroy {
       dialog = this.dialog.open(CreateTermComponent, {
         data: { 
           mode:'view',
-          columnInfo: data.columnInfo,
+          columnInfo: this.data.columnInfo,
           frameworkId: this.frameworkService.getFrameworkId(),
           selectedparents: this.heightLighted,
           colIndex: index,

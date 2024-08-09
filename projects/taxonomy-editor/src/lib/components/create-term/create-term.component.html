@@ -17,13 +17,13 @@
         <div class="dialog-title" mat-dialog-title>{{data.columnInfo.name === 'Theme' ? app_strings.addCompetency : app_strings.createNew}} {{data.columnInfo.name}}</div>
     </ng-container> -->
     <ng-container *ngIf="data?.mode === 'create' || data?.mode === 'multi-create'">
-        <div class="dialog-title" mat-dialog-title>Add {{data.columnInfo.config.categoryDisplayName || data.columnInfo.name }} </div>
+        <div class="dialog-title" mat-dialog-title>Add {{data?.columnInfo?.config?.categoryDisplayName || data.columnInfo.name }} </div>
     </ng-container>
     <ng-container *ngIf="data?.mode === 'view'">
         <div class="dialog-title" mat-dialog-title></div>
     </ng-container>
     <ng-container *ngIf="data?.mode === 'edit'">
-        <div class="dialog-title" mat-dialog-title>{{app_strings.edit}} {{data.columnInfo.config.categoryDisplayName || data.columnInfo.name}}</div>
+        <div class="dialog-title" mat-dialog-title>{{app_strings.edit}} {{data?.columnInfo?.config?.categoryDisplayName || data.columnInfo.name}}</div>
     </ng-container>
 </ng-template>
 
@@ -80,7 +80,7 @@
                 (ngSubmit)="disableCreate?updateTermAssociations():saveThemeTerm()">
                 <div class="input-column">
                     <div class="input-wrapper margin-top-s">
-                        <div class="flex gap-4 ">
+                        <div class="flex gap-4 " *ngIf="data.columnInfo?.code !== 'competencyarea' && data.mode === 'view'">
                             <div class="flex-1 flex-col">
                                 <label for="name" class="margin-remove-bottom form-label required"
                                     aria-label="First name label">
@@ -136,6 +136,19 @@
                             </mat-option>
                         </mat-autocomplete> -->
                                     <!-- <mat-error *ngIf="isTermExist">{{app_strings.alreadyExist}}</mat-error> -->
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 " *ngIf="data.columnInfo?.code === 'competencyarea' && data.mode === 'view'">
+                            <div class="flex-1 flex-col">
+                                <label for="name" class="margin-remove-bottom form-label required"
+                                    aria-label="First name label">
+                                     Name
+                                </label>
+                                
+                                <mat-form-field appearance="outline" class="flex-1">
+                                        <input  autocomplete="off" 
+                                           matInput [value]="data?.childrenData?.name" disabled>
                                 </mat-form-field>
                             </div>
                         </div>

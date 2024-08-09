@@ -16,7 +16,7 @@
                             </ng-container>
                             <span class="flex-1 mat-body-1">
                                 <!-- {{column.name}} -->
-                                {{column.config.categoryDisplayName || column.name }}
+                                {{column?.config?.categoryDisplayName || column.name }}
                                 <ng-container *ngIf="i != 0 && categoryList?.length > 0; else firstColumn">
                                     <ng-container *ngIf="column.index !== 1">
                                         <span class="count">({{getCount(column.code)}})</span>

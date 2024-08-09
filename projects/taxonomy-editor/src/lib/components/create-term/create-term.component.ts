@@ -292,7 +292,9 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
 
 
   updateFormView(form, data) {
-    form.get('dname').patchValue(data.childrenData.additionalProperties.displayName)
+    if(data && data.childrenData && data.childrenData.additionalProperties && data.childrenData.additionalProperties.displayName){
+      form.get('dname').patchValue(data.childrenData.additionalProperties.displayName)
+    }
     form.get('description').patchValue(data.childrenData.description)    
     
       if (data.childrenData.name && this.masterList.length) {
@@ -392,8 +394,11 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
   }
 
   onDisableTheme(option: any){
+    let parentCol
     const parentColumnConfigData = this.frameWorkService.getPreviousCategory(this.data.columnInfo.code)
-    let parentCol: any = this.frameWorkService.selectionList.get(parentColumnConfigData.code)
+    if(parentColumnConfigData) {
+      this.frameWorkService.selectionList.get(parentColumnConfigData.code)
+    }
     let result = -1
     if(parentCol && parentCol.children && parentCol.children.length){
       result = parentCol.children.findIndex((ele: any) => {
