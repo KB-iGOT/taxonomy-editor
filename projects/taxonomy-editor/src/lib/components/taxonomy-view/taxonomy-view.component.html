@@ -55,8 +55,8 @@
         (sendApproval)="sendForApproval()" (closeAction)="closeActionBar($event)"></lib-action-bar>
 </div>
 <div *ngIf="!(list && list.length > 0 ) && isFraworkLoading" class="flex heightFix ">
-    <h1 i18n>{{app_strings.noData}}</h1>
-    <div>
-        <div *ngIf="isLoading" class="spinner">
-            <mat-spinner></mat-spinner>
-        </div>
+    <h1 i18n>{{app_strings.loading}}</h1>
+</div>
+<div *ngIf="isLoading" class="spinner">
+    <mat-spinner></mat-spinner>
+</div>
