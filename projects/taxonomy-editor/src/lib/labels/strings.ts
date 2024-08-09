@@ -4,6 +4,7 @@ export const labels = {
     edit: "Edit",
     build: "build",
     noData: "No Data Available",
+    loading: "Loading",
     add: "add",
     pendingApproval: "Pending for Approval",
     date: "Date",
