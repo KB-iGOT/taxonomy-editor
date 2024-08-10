@@ -397,7 +397,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
     let parentCol
     const parentColumnConfigData = this.frameWorkService.getPreviousCategory(this.data.columnInfo.code)
     if(parentColumnConfigData) {
-      this.frameWorkService.selectionList.get(parentColumnConfigData.code)
+      parentCol = this.frameWorkService.selectionList.get(parentColumnConfigData.code)
     }
     let result = -1
     if(parentCol && parentCol.children && parentCol.children.length){
