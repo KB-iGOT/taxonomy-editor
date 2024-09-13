@@ -259,9 +259,9 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     if(localSearchValue) {
       filteredColumnData = this.columnData.filter((child: any) => {
         if(child.name.toLowerCase().includes(localSearchValue) || 
-        _.get(child, 'refId').toLowerCase().includes(localSearchValue) || 
-        _.get(child, 'description').toLowerCase().includes(localSearchValue)||
-        _.get(child, 'additionalProperties.displayName').toLowerCase().includes(localSearchValue)) {
+        (_.get(child, 'refId') && _.get(child, 'refId').toLowerCase().includes(localSearchValue)) || 
+        (_.get(child, 'description') && _.get(child, 'description').toLowerCase().includes(localSearchValue))||
+        (_.get(child, 'additionalProperties.displayName') && _.get(child, 'additionalProperties.displayName').toLowerCase().includes(localSearchValue))) {
           return child
         }
       })
