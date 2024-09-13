@@ -10,7 +10,7 @@ import * as appConstants from '../../constants/app-constant';
 import { labels } from '../../labels/strings';
 import { CardChecked, CardSelection, CardsCount, Card } from '../../models/variable-type.model';
 import { OdcsService } from '../../services/odcs.service';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import * as _ from 'lodash'
 
 @Component({

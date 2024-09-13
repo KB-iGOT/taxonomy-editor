@@ -5,7 +5,7 @@ import { FrameworkService } from '../../services/framework.service'
 import { LocalConnectionService } from '../../services/local-connection.service';
 import { labels } from '../../labels/strings';
 import { CardSelection, CardChecked, Card } from '../../models/variable-type.model';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { CreateTermComponent } from '../create-term/create-term.component';
 import { CreateTermFromFrameworkComponent } from './../create-term-from-framework/create-term-from-framework.component';
 import { ConforamtionPopupComponent } from '../conforamtion-popup/conforamtion-popup.component';

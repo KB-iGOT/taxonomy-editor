@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CreateTermFromFrameworkComponent } from './create-term-from-framework.component';
 
@@ -6,7 +6,7 @@ describe('CreateTermFromFrameworkComponent', () => {
   let component: CreateTermFromFrameworkComponent;
   let fixture: ComponentFixture<CreateTermFromFrameworkComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ CreateTermFromFrameworkComponent ]
     })

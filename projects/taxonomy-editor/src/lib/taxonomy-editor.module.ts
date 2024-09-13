@@ -7,7 +7,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field'
 import { MatButtonModule } from '@angular/material/button'
-import { MatChipsModule, MatExpansionModule, MatInputModule, MatMenuModule, MatRadioButton, MatRadioGroup, MatRadioModule, MatSelect, MatSelectModule } from '@angular/material'
+import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioButton, MatRadioGroup, MatRadioModule } from '@angular/material/radio';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon'
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog'
@@ -125,7 +130,7 @@ import { ConforamtionPopupComponent } from './components/conforamtion-popup/conf
   ]
 })
 export class TaxonomyEditorModule {
-  static forRoot(config: IConnectionType): ModuleWithProviders {
+  static forRoot(config: IConnectionType): ModuleWithProviders<TaxonomyEditorModule> {
     return {
       ngModule: TaxonomyEditorModule,
       providers: [
