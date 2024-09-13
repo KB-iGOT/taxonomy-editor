@@ -124,3 +124,9 @@ input[type="search"]::-webkit-search-cancel-button {
   .clear-btn:hover {
     color: #333;
   }
+
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 46;
+}
