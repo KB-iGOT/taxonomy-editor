@@ -5,25 +5,25 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { TaxonomyEditorRoutingModule } from './taxonomy-editor-routing.module'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field'
-import { MatButtonModule } from '@angular/material/button'
-import { MatChipsModule } from '@angular/material/chips';
+import { MatLegacyFormFieldModule as MatFormFieldModule, MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/legacy-form-field'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatRadioButton, MatRadioGroup, MatRadioModule } from '@angular/material/radio';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatLegacyRadioButton as MatRadioButton, MatLegacyRadioGroup as MatRadioGroup, MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
+import { MatLegacySelect as MatSelect, MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatIconModule } from '@angular/material/icon'
-import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatTabsModule, MAT_TABS_CONFIG } from '@angular/material/tabs';
-import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTableModule } from '@angular/material/table';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
+import { MatLegacyTabsModule as MatTabsModule, MAT_LEGACY_TABS_CONFIG as MAT_TABS_CONFIG } from '@angular/material/legacy-tabs';
+import { MatLegacySnackBarModule as MatSnackBarModule, MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS as MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/legacy-snack-bar';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 
 
 import { DashboardComponent } from './containers/dashboard/dashboard.component'
@@ -56,78 +56,72 @@ import { OdcsService } from './services/odcs.service';
 import { ConforamtionPopupComponent } from './components/conforamtion-popup/conforamtion-popup.component'
 
 @NgModule({
-  declarations: [
-    TaxonomyEditorComponent,
-    DashboardComponent,
-    ConfigFrameworkComponent,
-    CreateCategoriesComponent,
-    ConfigFrameworkComponent,
-    TaxonomyViewComponent,
-    TermCardComponent,
-    TaxonomyColumnViewComponent,
-    CategoriesPreviewComponent,
-    CategoriesPreviewComponent,
-    CreateTermComponent,
-    ConnectorComponent,
-    ActionBarComponent,
-    ApprovalComponent,
-    PendingApprovalComponent,
-    ApproveViewComponent,
-    OrderByPipe,
-    DatePipe,
-    ConforamtionPopupComponent,
-    CreateTermFromFrameworkComponent,
-  ],
-  imports: [
-    CommonModule,
-    TaxonomyEditorRoutingModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatInputModule,
-    MatIconModule,
-    MatCardModule,
-    MatDialogModule,
-    DragDropModule,
-    MatAutocompleteModule,
-    MatSelectModule,
-    HttpClientModule,
-    MatTabsModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatTableModule,
-    MatProgressSpinnerModule,
-    MatExpansionModule,
-    MatRadioModule,
-  ],
-  providers: [
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
-    // { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2000}},
-    { provide: MAT_TABS_CONFIG, useValue: { animationDuration: '0ms' }},
-    FrameworkService,
-    ConnectorService,
-    LocalConnectionService,
-    OdcsService,
-  ],
-  exports: [
-    TaxonomyEditorComponent,
-    CreateCategoriesComponent,
-    ConfigFrameworkComponent,
-    TaxonomyViewComponent,
-    TermCardComponent,
-    CategoriesPreviewComponent
-  ],
-  entryComponents: [
-    CreateTermComponent,
-    ConnectorComponent,
-    ConforamtionPopupComponent,
-    CreateTermFromFrameworkComponent,
-  ]
+    declarations: [
+        TaxonomyEditorComponent,
+        DashboardComponent,
+        ConfigFrameworkComponent,
+        CreateCategoriesComponent,
+        ConfigFrameworkComponent,
+        TaxonomyViewComponent,
+        TermCardComponent,
+        TaxonomyColumnViewComponent,
+        CategoriesPreviewComponent,
+        CategoriesPreviewComponent,
+        CreateTermComponent,
+        ConnectorComponent,
+        ActionBarComponent,
+        ApprovalComponent,
+        PendingApprovalComponent,
+        ApproveViewComponent,
+        OrderByPipe,
+        DatePipe,
+        ConforamtionPopupComponent,
+        CreateTermFromFrameworkComponent,
+    ],
+    imports: [
+        CommonModule,
+        TaxonomyEditorRoutingModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatInputModule,
+        MatIconModule,
+        MatCardModule,
+        MatDialogModule,
+        DragDropModule,
+        MatAutocompleteModule,
+        MatSelectModule,
+        HttpClientModule,
+        MatTabsModule,
+        MatSnackBarModule,
+        MatTooltipModule,
+        MatCheckboxModule,
+        MatChipsModule,
+        MatTableModule,
+        MatProgressSpinnerModule,
+        MatExpansionModule,
+        MatRadioModule,
+    ],
+    providers: [
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+        // { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
+        { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2000 } },
+        { provide: MAT_TABS_CONFIG, useValue: { animationDuration: '0ms' } },
+        FrameworkService,
+        ConnectorService,
+        LocalConnectionService,
+        OdcsService,
+    ],
+    exports: [
+        TaxonomyEditorComponent,
+        CreateCategoriesComponent,
+        ConfigFrameworkComponent,
+        TaxonomyViewComponent,
+        TermCardComponent,
+        CategoriesPreviewComponent
+    ]
 })
 export class TaxonomyEditorModule {
   static forRoot(config: IConnectionType): ModuleWithProviders<TaxonomyEditorModule> {

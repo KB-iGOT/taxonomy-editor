@@ -1,16 +1,16 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { FrameworkService } from '../../services/framework.service';
 import { startWith, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FormArray, FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/internal/Observable';
-import { Identifiers } from '@angular/compiler';
+// import { Identifiers } from '@angular/compiler';
 import { NSFramework } from '../../models/framework.model';
 import * as appConstants from '../../constants/app-constant';
 import { labels } from '../../labels/strings';
 import { CardChecked, CardSelection, CardsCount, Card } from '../../models/variable-type.model';
 import { OdcsService } from '../../services/odcs.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import * as _ from 'lodash'
 
 @Component({
@@ -23,9 +23,9 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
   name: string = '';
   termLists: Array<Card> = [];
   filtedTermLists: Observable<any[]>;
-  createTermForm: FormGroup
-  createThemeForm: FormGroup
-  createThemeFormMulti: FormGroup
+  createTermForm: UntypedFormGroup
+  createThemeForm: UntypedFormGroup
+  createThemeFormMulti: UntypedFormGroup
   disableCreate: boolean = false;
   disableUpdate: boolean = false;
   disableMultiCreate: boolean = false;
@@ -43,7 +43,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
   filteredallCompetencyTheme:any[]=[]
   allCompetencySubtheme:any[]=[]
   filteredallCompetencySubTheme:any[]=[]
-   competencyForm: FormGroup
+   competencyForm: UntypedFormGroup
   compLabeltext:string = ''
   masterList:any[]=[];
   filteredMasterList:any[]=[];
@@ -63,7 +63,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<CreateTermComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private frameWorkService: FrameworkService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private odcsService: OdcsService,
     private _snackBar: MatSnackBar,
     private cdr:ChangeDetectorRef
@@ -187,8 +187,8 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
   //   });
   // }
 
-  get themeFields(): FormArray {
-    return this.createThemeFormMulti.get('themeFields') as FormArray;
+  get themeFields(): UntypedFormArray {
+    return this.createThemeFormMulti.get('themeFields') as UntypedFormArray;
   }
 
   get themeFieldsControls() {
@@ -196,7 +196,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
     return (<any>themeFields)['controls']
   }
 
-  createThemeFields(): FormGroup {
+  createThemeFields(): UntypedFormGroup {
     return this.fb.group({
       name: ['', [Validators.required]],
       dname: [{value: '', disabled: true}, [Validators.required]],
@@ -262,7 +262,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
 
  
 
-  createCompThemeFields():FormGroup {
+  createCompThemeFields():UntypedFormGroup {
     return this.fb.group({
       competencyTheme:['', [Validators.required]],
       competencySubTheme:['', [Validators.required]]
@@ -281,8 +281,8 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
     }
   }
 
-  get compThemeFields(): FormArray {
-    return this.competencyForm.get('compThemeFields') as FormArray;
+  get compThemeFields(): UntypedFormArray {
+    return this.competencyForm.get('compThemeFields') as UntypedFormArray;
   }
 
   // get compThemeFieldsControls() {
@@ -411,7 +411,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
       
     }
     if(result < 0){
-      let formArray = this.createThemeFormMulti.get('themeFields') as FormArray;
+      let formArray = this.createThemeFormMulti.get('themeFields') as UntypedFormArray;
       result = formArray.value.findIndex((formEle: any) => {
         if(formEle.name && formEle.name.id){
           return  formEle.name.id === option.id
@@ -604,7 +604,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
   //#region (designations)
 
   get designationControls() {
-    return (this.createThemeForm.get('designations') as FormArray).controls;
+    return (this.createThemeForm.get('designations') as UntypedFormArray).controls;
   }
 
   loadDesignations() {
@@ -635,7 +635,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
       creationId: this.addedDesignationCount // creationId is created to use locally to give unique id to added records
     });
     this.addedDesignationCount = this.addedDesignationCount + 1;
-    (this.createThemeForm.get('designations') as FormArray).insert(0, newDesignation);
+    (this.createThemeForm.get('designations') as UntypedFormArray).insert(0, newDesignation);
     // this.panelOpenState.insert(0, true)
     this.panelOpenState.splice(0, 0, true);
   }
@@ -650,7 +650,7 @@ export class CreateTermComponent implements OnInit, AfterViewInit {
 
   deleteDesignation(index: number) {
     const reovedCreationId = this.designationControls[index].value.creationId;
-    (this.createThemeForm.get('designations') as FormArray).removeAt(index);
+    (this.createThemeForm.get('designations') as UntypedFormArray).removeAt(index);
     this.savedDesignations = this.savedDesignations.filter((savedDesignation: any) => savedDesignation.creationId !== reovedCreationId)
   }
 

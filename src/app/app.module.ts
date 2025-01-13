@@ -5,7 +5,7 @@ import { AppComponent } from './app.component'
 import { TaxonomyEditorModule } from 'taxonomy-editor'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
-import { MatButtonModule } from '@angular/material/button'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { AppRoutingModule } from './app-routing.module'
 import { environment } from 'src/environments/environment'
 

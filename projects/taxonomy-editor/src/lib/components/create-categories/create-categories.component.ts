@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit, Input, Output , EventEmitter} from '@angular/core';
-import { FormArray, FormControl, FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormArray, FormControl, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { labels } from '../../labels/strings'
 
 
@@ -15,11 +15,11 @@ export class CreateCategoriesComponent implements OnInit {
   @Output() removeCategories = new EventEmitter()
   @Output() changePosition = new EventEmitter()
 
-  createCategoriesForm: FormGroup
+  createCategoriesForm: UntypedFormGroup
 
   app_strings: any = labels;
   
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: UntypedFormBuilder) { }
 
   ngOnInit() { 
    this.createCategoriesForm = this.fb.group({
@@ -31,11 +31,11 @@ export class CreateCategoriesComponent implements OnInit {
       this.addCategory()
     }
   }
-  categories(): FormArray {
-    return this.createCategoriesForm.get('categories') as FormArray
+  categories(): UntypedFormArray {
+    return this.createCategoriesForm.get('categories') as UntypedFormArray
   }
 
-  newCategories(): FormGroup {  
+  newCategories(): UntypedFormGroup {  
     return this.fb.group({  
       name:'',  
     })  

@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators'
 import { ApprovalService } from '../../services/approval.service';
 import { FrameworkService } from '../../services/framework.service';
 import * as API from '../../constants/app-constant'
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 declare var LeaderLine: any;
 @Component({
   selector: 'lib-approve-view',

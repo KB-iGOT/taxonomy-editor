@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { labels } from '../../labels/strings';
 import { FrameworkService } from '../../services/framework.service';
 import { NSFramework } from '../../models/framework.model';
@@ -9,7 +9,7 @@ import * as appConstants from '../../constants/app-constant';
 import { Card } from '../../models/variable-type.model';
 /* tslint:disable */
 import _ from 'lodash'
-import { resolve } from 'url';
+// import { resolve } from 'url';
 import { ConforamtionPopupComponent } from '../conforamtion-popup/conforamtion-popup.component';
 /* tslint:enable */
 
@@ -35,7 +35,7 @@ export class CreateTermFromFrameworkComponent implements OnInit {
   disableUpdate: boolean = false;
 
 
-  competencyForm: FormGroup
+  competencyForm: UntypedFormGroup
 
 
   kcmList : any= new Map<string, NSFramework.IColumnView>();
@@ -55,7 +55,7 @@ export class CreateTermFromFrameworkComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
     public frameWorkService: FrameworkService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private _snackBar: MatSnackBar,
   ) { }
 
@@ -123,7 +123,7 @@ export class CreateTermFromFrameworkComponent implements OnInit {
   }
 
 
-  createCompThemeFields():FormGroup {
+  createCompThemeFields():UntypedFormGroup {
     return this.fb.group({
       competencyTheme:['', [Validators.required]],
       competencySubTheme:['', [Validators.required]]
@@ -258,7 +258,7 @@ export class CreateTermFromFrameworkComponent implements OnInit {
                     this.filteredallCompetencyTheme.push(ele)
                     // to do:  to be check based on reff id
                     if(this.selectedCardCompThemeData.refId.toLowerCase() === ele.refId.toLowerCase()){
-                      let formArray = this.competencyForm.get('compThemeFields') as FormArray;
+                      let formArray = this.competencyForm.get('compThemeFields') as UntypedFormArray;
                       formArray.at(0).get('competencyTheme').patchValue(ele)
                       formArray.at(0).get('competencyTheme').updateValueAndValidity()
                       this.competencyForm.get('compArea').patchValue(option)
@@ -305,7 +305,7 @@ export class CreateTermFromFrameworkComponent implements OnInit {
                  } else {
                   matchedData = _.intersectionBy(themeChild.children,this.selectedCardCompThemeData.children, 'refId');
                  }
-                  let formArray = this.competencyForm.get('compThemeFields') as FormArray;
+                  let formArray = this.competencyForm.get('compThemeFields') as UntypedFormArray;
                   formArray.at(_indexValue).get('competencySubTheme').patchValue(matchedData)
                   formArray.at(_indexValue).get('competencySubTheme').updateValueAndValidity()
               }
@@ -318,8 +318,8 @@ export class CreateTermFromFrameworkComponent implements OnInit {
   }
 
   onTermRemove(termData: any, indexValue: number) {
-    let formArray = this.competencyForm.get('compThemeFields') as FormArray;
-    const compThemeControl = formArray.at(indexValue).get('competencySubTheme') as FormControl | null
+    let formArray = this.competencyForm.get('compThemeFields') as UntypedFormArray;
+    const compThemeControl = formArray.at(indexValue).get('competencySubTheme') as UntypedFormControl | null
     if (compThemeControl) {
       const themes = compThemeControl.value
       if (themes) {
@@ -334,8 +334,8 @@ export class CreateTermFromFrameworkComponent implements OnInit {
   }
 
   OnSubThemeSelection(event: any, indexValue: number, option: any){
-    let formArray = this.competencyForm.get('compThemeFields') as FormArray;
-    const compThemeControl = formArray.at(indexValue).get('competencySubTheme') as FormControl | null
+    let formArray = this.competencyForm.get('compThemeFields') as UntypedFormArray;
+    const compThemeControl = formArray.at(indexValue).get('competencySubTheme') as UntypedFormControl | null
     
   }
 
@@ -761,7 +761,7 @@ export class CreateTermFromFrameworkComponent implements OnInit {
 
   async multiCreateSubTheme(form: any, data: any) {
     this.disableMultiCreate = true
-    let formArray = this.competencyForm.get('compThemeFields') as FormArray;
+    let formArray = this.competencyForm.get('compThemeFields') as UntypedFormArray;
     let selectedFormData = formArray.at(0).get('competencySubTheme').value
     let previousSubThemeData = data.childrenData.children
     let newlyAdded = []
@@ -871,7 +871,7 @@ export class CreateTermFromFrameworkComponent implements OnInit {
     }
 
     if(result < 0){
-      let formArray = this.competencyForm.get('compThemeFields') as FormArray;
+      let formArray = this.competencyForm.get('compThemeFields') as UntypedFormArray;
       result = formArray.value.findIndex((formEle: any) => {
         if(formEle.competencyTheme && formEle.competencyTheme.refId ){
           return  formEle.competencyTheme.refId === option.refId
@@ -963,8 +963,8 @@ export class CreateTermFromFrameworkComponent implements OnInit {
 
   // getter methods
 
-  get compThemeFields(): FormArray {
-    return this.competencyForm.get('compThemeFields') as FormArray;
+  get compThemeFields(): UntypedFormArray {
+    return this.competencyForm.get('compThemeFields') as UntypedFormArray;
   }
 
 }

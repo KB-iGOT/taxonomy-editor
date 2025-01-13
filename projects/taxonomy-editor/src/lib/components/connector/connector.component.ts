@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { LocalConnectionService } from '../../services/local-connection.service';
 import { FrameworkService } from '../../services/framework.service';
 import { IConnectionType } from '../../models/connection-type.model';
@@ -14,14 +14,14 @@ import { labels } from '../../labels/strings';
 })
 
 export class ConnectorComponent implements OnInit {
-  connectorForm: FormGroup;
+  connectorForm: UntypedFormGroup;
   app_strings: any = labels;
   constructor(
     public dialogRef: MatDialogRef<ConnectorComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private frameWorkService: FrameworkService,
     private localScv: LocalConnectionService,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit() {

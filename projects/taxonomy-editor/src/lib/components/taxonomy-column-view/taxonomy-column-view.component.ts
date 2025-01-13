@@ -5,7 +5,7 @@ import { ConnectorService } from '../../services/connector.service';
 import { ApprovalService } from '../../services/approval.service';
 import { CardChecked, CardSelection, CardsCount, Card } from '../../models/variable-type.model';
 import * as _ from 'lodash'
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 declare var LeaderLine: any;
@@ -26,7 +26,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   newTermSubscription: Subscription = null;
   approvalTerm: any;
   termshafall: Array<Card> = [];
-  searchValue = new FormControl('', [Validators.required]);
+  searchValue = new UntypedFormControl('', [Validators.required]);
   constructor(
     private frameworkService: FrameworkService,
     private connectorService: ConnectorService,
