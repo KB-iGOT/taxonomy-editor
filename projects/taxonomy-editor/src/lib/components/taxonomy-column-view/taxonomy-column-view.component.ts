@@ -27,6 +27,9 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   approvalTerm: any;
   termshafall: Array<Card> = [];
   searchValue = new UntypedFormControl('', [Validators.required]);
+  startIndex = 0
+  limitToAdd = 50
+  currentLastIndex = 50
   constructor(
     private frameworkService: FrameworkService,
     private connectorService: ConnectorService,
@@ -269,7 +272,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
       filteredColumnData = this.columnData
     }
     
-    return filteredColumnData
+    return filteredColumnData ? filteredColumnData.slice(this.startIndex, this.currentLastIndex) : []
     // }
   }
 
@@ -289,6 +292,11 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
 
   clearSearch() {
     this.searchValue.setValue('')
+  }
+
+  loadMore() {
+    this.currentLastIndex = this.currentLastIndex + this.limitToAdd
+    this.searchFilterData(this.searchValue.value)
   }
 
   setConnectors(elementClicked, columnItem, mode) {
@@ -387,6 +395,14 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   }
   selectedCard(event){
     this.updateTermList.emit(event);
+  }
+
+  get showLoadMoreBtn(): boolean {
+    if(this.column && this.column.config && this.column.config.categoryDisplayName !== 'Organisation' 
+      && this.column.name !== 'Organisation' && this.columnItems && this.columnItems.length > 0) {
+        return true
+      }
+    return false
   }
 
   ngOnDestroy(): void {
