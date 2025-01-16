@@ -28,5 +28,6 @@
 </ng-template>
 
 <div class="w-full flex justify-center" *ngIf="showLoadMoreBtn">
-    <button (click)="loadMore()" class="mat-raised-button mat-button-base loadMore">Load more...</button>
+    <button (click)="loadMore()" class="mat-raised-button mat-button-base loadMore" [ngClass]="{'disablBtn': disableLoadButton}"
+    [disabled]="disableLoadButton">Load more...</button>
 </div>
