@@ -1,6 +1,6 @@
 {
   "name": "taxonomy",
-  "version": "0.0.0-ang-13-16",
+  "version": "0.0.2-ang-13-16",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --watch --proxy-config proxy/localhost.proxy.json -o",
