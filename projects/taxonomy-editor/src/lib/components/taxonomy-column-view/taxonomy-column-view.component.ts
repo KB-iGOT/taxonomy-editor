@@ -405,6 +405,13 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     return false
   }
 
+  get disableLoadButton(): boolean {
+    if(this.columnData && this.columnData.length < this.currentLastIndex) {
+      return true
+    }
+    return false
+  }
+
   ngOnDestroy(): void {
     if (this.childSubscription) {
       this.childSubscription.unsubscribe()
