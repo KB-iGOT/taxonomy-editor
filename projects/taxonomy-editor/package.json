@@ -1,6 +1,6 @@
 {
   "name": "@sunbird-cb/taxonomy-editor",
-  "version": "0.0.2-ang-13-16",
+  "version": "0.0.3-ang-13-16",
   "dependencies": {
     "tslib": "^2.0.0"
   },

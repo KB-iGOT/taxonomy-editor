@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FrameworkService } from '../../services/framework.service';
 import { Subscription } from 'rxjs';
 import { ConnectorService } from '../../services/connector.service';
@@ -30,17 +30,20 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   startIndex = 0
   limitToAdd = 50
   currentLastIndex = 50
+  columnItems = []
+  filteredColumnItems = []
   constructor(
     private frameworkService: FrameworkService,
     private connectorService: ConnectorService,
     private approvalService : ApprovalService
   ) {
   }
-  ngOnChanges(changes: SimpleChanges): void {}
+  ngOnChanges(): void {}
 
 
   ngOnInit(): void {
     this.subscribeEvents()
+    this.setColumnItems()
     this.searchValue.valueChanges.pipe(
       debounceTime(700),
       distinctUntilChanged(),
@@ -67,7 +70,8 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
               this.termshafall.push(tr)
             }
           })
-          this.columnData = this.termshafall;
+          this.columnData = this.transform(this.termshafall);
+          this.setColumnItems()
           if(this.columnData && this.columnData.length) {
             this.cardsCount.emit({category: this.columnData[0].category,count:this.columnData.length});
           }
@@ -104,15 +108,16 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
         } else {
           this.updateTaxonomyTerm.emit({ isSelected: true, selectedTerm })
         }
-        this.columnData = (this.columnData || []).map(item => {
+        this.columnData = this.transform((this.columnData || []).map(item => {
           if (item.code === e.data.code) {
             item.selected = true
           } else {
             item.selected = false
           }
           return item
-        });
-        this.setConnectors(e.cardRef, this.columnData, 'SINGLE')
+        }));
+        this.setColumnItems()
+        this.setConnectors(e.cardRef, this.columnItems, 'SINGLE')
         return
       } else {
         const next = this.frameworkService.getNextCategory(e.type);
@@ -145,13 +150,14 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
           //     })
           //   // this.updateTerms()
           setTimeout(() => {
-            this.setConnectors(e.cardRef, next && next.index < this.column.index ? [] : this.columnData, 'ALL')
+            this.setConnectors(e.cardRef, next && next.index < this.column.index ? [] : this.columnItems, 'ALL')
           }, 100);
           // console.log(this.columnData)
         }
 
         if (next && next.index < this.column.index) {
           this.columnData = [];
+          this.setColumnItems()
         }
       }
     })
@@ -204,7 +210,8 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     if(!isUpdate) {
       console.log('insertUpdateHandler localTerms', localTerms)
     // get last parent and filter Above
-    this.columnData = [...localTerms, ...(e.data.children || [])]
+    if(e && e.data) {
+    this.columnData = this.transform([...localTerms, ...(e.data.children || [])])
       .filter(x => {
         return x.category == this.column.code
       }).map(mer => {
@@ -217,6 +224,8 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
         mer.children = ([...this.column.children.filter(x => { return x.code === mer.code }).map(a => a.children)].shift() || [])
         return mer
       });
+    }
+      this.setColumnItems()
 
     if(this.columnData.length > 0) {
       this.cardsCount.emit({category: this.columnData[0].category,count:this.columnData.length});
@@ -248,7 +257,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     console.log(selection)
   }
 
-  get columnItems() {
+  setColumnItems() {
     // const selected = this.column.children.filter(f => { return f.selected })
     // if (selected.length > 0) {
     //   const data = this.columnData.map(cd => {
@@ -259,6 +268,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     // } else {
     let localSearchValue = this.searchValue.value
     let filteredColumnData = []
+    this.columnItems = []
     if(localSearchValue) {
       filteredColumnData = this.columnData.filter((child: any) => {
         if(child.name.toLowerCase().includes(localSearchValue) || 
@@ -271,9 +281,32 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     } else {
       filteredColumnData = this.columnData
     }
+    this.filteredColumnItems = filteredColumnData
     
-    return filteredColumnData ? filteredColumnData.slice(this.startIndex, this.currentLastIndex) : []
+    this.columnItems = filteredColumnData ? filteredColumnData.slice(this.startIndex, this.currentLastIndex) : []
     // }
+  }
+
+  transform(value: any, sortBy = 'timeStamp'): any{
+    if(!sortBy) {
+      if(value) {
+        return value.slice().reverse();
+      } else {
+        return null
+      }
+    } else {
+      if(Array.isArray(value)) {
+          return  value.sort((a, b) => {
+            const timestampA = a.additionalProperties && a.additionalProperties.timeStamp ? new Date(Number(a.additionalProperties.timeStamp)).getTime() : 0;
+            const timestampB = b.additionalProperties && b.additionalProperties.timeStamp ? new Date(Number(b.additionalProperties.timeStamp)).getTime() : 0;
+             
+            return  timestampB - timestampA;
+            
+            });
+     
+      }
+    }
+     
   }
 
   searchFilterData(ele: any){
@@ -288,6 +321,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
         }, 200)
       }
     }
+    this.setColumnItems()
    }
 
   clearSearch() {
@@ -406,7 +440,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   }
 
   get disableLoadButton(): boolean {
-    if(this.columnData && this.columnData.length < this.currentLastIndex) {
+    if(this.filteredColumnItems && this.filteredColumnItems.length < this.currentLastIndex) {
       return true
     }
     return false
