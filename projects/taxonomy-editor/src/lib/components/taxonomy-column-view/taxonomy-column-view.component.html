@@ -3,11 +3,14 @@
         <div class="search mb-2">
             <div class=rsearch>
                 <!-- <ng-container *ngIf="column?.config?.showSearch"> -->
-                    <mat-icon class="color-60 search-icon">search</mat-icon>
-                    <input type="search" [formControl]="searchValue" class="sinput color-60" placeholder="Search" #search>
-                    <button *ngIf="search.value" class="clear-btn flex" (click)="clearSearch()">
-                        <mat-icon class="">clear</mat-icon>
-                    </button>
+                    <div class="sinput">
+                        <mat-icon class="material-icons">search</mat-icon>
+                        <input type="search" [formControl]="searchValue" class="" placeholder="Search" #search>
+                        <button *ngIf="search.value" class="clear-btn flex" (click)="clearSearch()">
+                            <mat-icon class="">clear</mat-icon>
+                        </button>
+                    </div>
+                  
                 <!-- </ng-container> -->
             </div>
         </div>
