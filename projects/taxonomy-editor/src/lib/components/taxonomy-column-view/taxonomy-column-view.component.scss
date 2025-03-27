@@ -90,6 +90,13 @@ flex-center {
       box-sizing: border-box;
       height: 42px;
 
+      input {
+        border: 0 !important;
+        // width: 75%;
+        outline: none !important;
+        margin-top: 2px;
+      }
+
     }
   }
   
