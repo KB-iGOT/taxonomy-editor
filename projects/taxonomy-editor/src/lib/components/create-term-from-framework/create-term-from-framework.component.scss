@@ -311,6 +311,14 @@ input[type=number] {
   .w-full-imp {
     width: 100% !important;
   }
+  ::ng-deep .full-width-panel {
+    width: 100% !important; 
+    min-width: 300px;        
+  }
+  
+  ::ng-deep .full-width-panel .mat-option {
+    white-space: normal;     
+  }
 
   .btn-success {
     background-color: #0075B7!important;
@@ -685,6 +693,11 @@ input.mat-input-element {
 }
 .ref-id {
     font-size: 10px;
+}
+
+::ng-deep .mat-select-panel {
+  min-width: 103%!important;
+  margin-left:32px;
 }
 
 .loader-bg {

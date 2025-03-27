@@ -109,12 +109,12 @@
                                             <!-- {{competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencySubTheme?.value |json}} -->
                                             <mat-form-field appearance="outline" class="w-full field-height" >
                                                 <mat-select class=" placeholder-text" placeholder="Choose the Competency Sub-Theme"
-                                                  formControlName="competencySubTheme" multiple [disabled]="data.openMode ==='view'">
+                                                  formControlName="competencySubTheme" multiple [disabled]="data.openMode ==='view'" panelClass="full-width-panel">
                                                   <!-- [ngClass]="{'disbaledSelect':isHideData}" -->
                                                   <mat-select-trigger >
                                                     <mat-chip-list>
                                                         <!-- -->
-                                                        
+                                                       
                                                       <mat-chip *ngFor="let item of competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencySubTheme?.value" 
                                                       (removed)="onTermRemove(item, i)" [disabled]="data.openMode ==='view'"
                                                       [ngClass]="{'sub-theme-disable': data?.openMode ==='view'}"  [removable]="data?.openMode ==='view'? false: true">
@@ -135,12 +135,12 @@
                                                   </mat-optgroup>
                                                   <!-- <mat-option *ngFor="let option of requestObjData.preferredProvider" [value]="option.providerName">{{option.providerName}}</mat-option> -->
                                                   <ng-container *ngFor="let option of competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencyTheme?.value?.children">
-                                                    <mat-option 
-                                                       [value]="option">{{option.name}}
-                                                       <ng-container *ngIf="option.refId">
-                                                        <span class="ml-2 ref-id">({{option.refId}})</span>
-                                                       </ng-container>
-                                                    </mat-option>
+                                                        <mat-option 
+                                                        [value]="option" class="mat-option-list">{{option?.name}}
+                                                        <ng-container *ngIf="option?.refId">
+                                                         <span class="ml-2 ref-id">({{option?.refId}})</span>
+                                                        </ng-container>
+                                                     </mat-option>
                                                   </ng-container>
                                 
                                                 </mat-select>
