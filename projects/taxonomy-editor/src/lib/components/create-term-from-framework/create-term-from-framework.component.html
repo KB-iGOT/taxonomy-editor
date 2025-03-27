@@ -136,8 +136,8 @@
                                                   <!-- <mat-option *ngFor="let option of requestObjData.preferredProvider" [value]="option.providerName">{{option.providerName}}</mat-option> -->
                                                   <ng-container *ngFor="let option of competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencyTheme?.value?.children">
                                                         <mat-option 
-                                                        [value]="option" class="mat-option-list">{{option.name}}
-                                                        <ng-container *ngIf="option.refId">
+                                                        [value]="option" class="mat-option-list">{{option?.name}}
+                                                        <ng-container *ngIf="option?.refId">
                                                          <span class="ml-2 ref-id">({{option.refId}})</span>
                                                         </ng-container>
                                                      </mat-option>
