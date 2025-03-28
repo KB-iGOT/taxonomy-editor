@@ -266,7 +266,8 @@ export class TaxonomyViewComponent implements OnInit, OnDestroy {
               selectedParentTerms: selectedTerms
             },
             width: '800px',
-            panelClass: 'custom-dialog-container'
+            panelClass: 'custom-dialog-container',
+            position: { top: '50px' }
           })
         } else {
           dialog = this.dialog.open(CreateTermComponent, {
@@ -288,7 +289,8 @@ export class TaxonomyViewComponent implements OnInit, OnDestroy {
               selectedParentTerms: selectedTerms
             },
             width: '800px',
-            panelClass: 'custom-dialog-container'
+            panelClass: 'custom-dialog-container',
+            position: { top: '50px' }
           })
         }
         dialog.afterClosed().subscribe(res => {
