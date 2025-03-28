@@ -678,6 +678,10 @@ input.mat-input-element {
     background: #0074b6 !important;
 }
 
+::ng-deep .mat-select-panel .mat-option {
+  line-height: 1!important;
+}
+
 .comp-theme-fields {
     background: #EEF1F7 !important;
     border: 1px solid #DBE0E9 !important;
