@@ -266,7 +266,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     //   })
     //   return data
     // } else {
-    let localSearchValue = this.searchValue.value
+    let localSearchValue = this.searchValue.value && this.searchValue.value.toLowerCase() || ''
     let filteredColumnData = []
     this.columnItems = []
     if(localSearchValue) {
@@ -310,6 +310,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   }
 
   searchFilterData(ele: any){
+    debugger
     const back = this.frameworkService.getPreviousCategory(this.column.code)
     if(back && back.code) {
       let backColumData = this.frameworkService.selectionList.get(back.code)
