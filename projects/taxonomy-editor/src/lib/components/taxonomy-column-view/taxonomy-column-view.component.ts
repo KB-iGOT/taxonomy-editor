@@ -266,7 +266,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     //   })
     //   return data
     // } else {
-    let localSearchValue = this.searchValue.value
+    let localSearchValue = this.searchValue.value && this.searchValue.value.toLowerCase() || ''
     let filteredColumnData = []
     this.columnItems = []
     if(localSearchValue) {
