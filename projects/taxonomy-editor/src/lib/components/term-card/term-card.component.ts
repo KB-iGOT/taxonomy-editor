@@ -53,9 +53,7 @@ export class TermCardComponent implements OnInit, OnDestroy {
     this.isApprovalRequired = this.localConnectionService.getConfigInfo().isApprovalRequired
     // console.log(this._data)
     this.updateApprovalStatus()
-    console.log('dataaaa',this.data)
     this.subscription = this.frameworkService.insertUpdateDeleteNotifier.subscribe((e)=>{
-      console.log('termCard',e);
       if(e){
        this.isCompetencyArea = e.action
       }

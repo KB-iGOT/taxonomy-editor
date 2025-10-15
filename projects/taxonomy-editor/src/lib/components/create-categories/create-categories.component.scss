@@ -16,7 +16,7 @@
     &-field{
         display: flex;
         flex-direction: row;
-        justify-content: start;
+        justify-content: flex-start;
         &__wrap{
             display: flex;
              flex-direction: column;
@@ -28,7 +28,7 @@
     &__btns {
         display: flex;
         flex-direction: column;
-        justify-content: end;
+        justify-content: flex-end;
         padding-bottom: 15px;
         margin-left: 15px;
     }
@@ -69,7 +69,7 @@
 footer {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: flex-start;
     .mat-raised-button {
         padding:0px 40px;
     }
