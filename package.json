@@ -1,10 +1,12 @@
 {
   "name": "taxonomy",
-  "version": "0.0.7-ang-13-16",
+  "version": "0.0.1-cbrelease-4.8.29",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --watch --proxy-config proxy/localhost.proxy.json -o",
-    "build": "./node_modules/@angular/cli/bin/ng build --watch",
+    "build": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --watch",
+    "build:lib:watch": "ng build taxonomy-editor --watch",
+    "link:lib": "cd dist/taxonomy-editor && npm link",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

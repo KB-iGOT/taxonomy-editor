@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, OnDestroy, HostListener, ChangeDetectorRef, QueryList, ViewChildren } from '@angular/core';
 import { FrameworkService } from '../../services/framework.service';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CreateTermComponent } from '../create-term/create-term.component';
@@ -8,12 +8,13 @@ import { IConnectionType } from '../../models/connection-type.model';
 import { Subscription } from 'rxjs';
 import { ConnectorService } from '../../services/connector.service';
 import { ApprovalService } from '../../services/approval.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { defaultConfig, headerLineConfig } from '../../constants/app-constant';
 import { labels } from '../../labels/strings';
 import { Card } from '../../models/variable-type.model';
 import { CreateTermFromFrameworkComponent } from '../create-term-from-framework/create-term-from-framework.component';
+import { TaxonomyColumnViewComponent } from '../taxonomy-column-view/taxonomy-column-view.component';
 
 declare var LeaderLine: any;
 @Component({
@@ -45,6 +46,8 @@ export class TaxonomyViewComponent implements OnInit, OnDestroy {
   configCodeBtn:any;
   dataConfig:any
   isFraworkLoading = true
+
+  @ViewChildren('selectedTaxonomyTerm') taxonomyColumnViews!: QueryList<TaxonomyColumnViewComponent>;
   constructor(private frameworkService: FrameworkService, 
     private localSvc: LocalConnectionService, 
     public dialog: MatDialog, 
@@ -52,7 +55,9 @@ export class TaxonomyViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private _snackBar: MatSnackBar,
     private connectorSvc: ConnectorService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute,
+  ) { }
 
   ngOnInit() {
     this.init()
@@ -71,25 +76,66 @@ export class TaxonomyViewComponent implements OnInit, OnDestroy {
 
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
- } 
+ }
 
   init() {
     this.initConfig();
-    this.frameworkService.getFrameworkInfo().subscribe(res => {
-      this.connectorSvc.removeAllLines()
-      this.frameworkService.categoriesHash.value.forEach((cat:any) => {
-        this.loaded[cat.code] = true
-      })
-      this.isLoading = false
+    this.frameworkService.getFrameworkInfo().subscribe(
+      (res) => {
+        this.connectorSvc.removeAllLines();
+        this.frameworkService.categoriesHash.value.forEach((cat: any) => {
+          this.loaded[cat.code] = true;
+        });
+        this.isLoading = false;
         setTimeout(() => {
-             this.drawHeaderLine(res.result.framework.categories.length);  
-             this.makeFirstTermSelected()
-        },500)
-    }, (err) => {
-      console.error('error in fetching framework', err)
-    })
-  
+          this.drawHeaderLine(res.result.framework.categories.length);
+          this.makeFirstTermSelected();
+        }, 500);
+
+        this.filterDesignationFromRoute()
+      },
+      (err) => {
+        console.error("error in fetching framework", err);
+      }
+    );
   }
+
+  filterDesignationFromRoute() {
+    const designation = this.activatedRoute.snapshot.queryParamMap.get("name");
+    setTimeout(() => {
+      const designationComponent = this.getTaxonomyComponentById("designation");
+      if (designationComponent) {
+        designationComponent.searchValue.setValue(designation);
+          const entries = Array.from(this.frameworkService.list.entries());
+          const secondEntry = entries[1]
+
+        setTimeout(() => {
+          if(secondEntry && secondEntry.length >= 2){
+            if(secondEntry[1] && secondEntry[1].children && secondEntry[1].children.length) {
+              const firstTerm = secondEntry[1].children.find(t => t.name.toLowerCase() === designation.toLowerCase()) as any
+              const cardRef = document.getElementById(firstTerm.name)
+              this.categoryList = []
+              firstTerm.selected = true
+              this.frameworkService.cardClkData = firstTerm;
+              this.frameworkService.CurrentCardClk.next(firstTerm.category)
+              this.frameworkService.currentSelection.next({ type: firstTerm.category, data: firstTerm, cardRef })
+              this.isFraworkLoading = false
+            }
+          }
+        }, 1000);
+
+      }
+    });
+  }
+
+  getTaxonomyComponentById(
+    componentId: string
+  ): TaxonomyColumnViewComponent | undefined {
+    return this.taxonomyColumnViews.find(
+      (comp: any) => comp?.column?.description?.toLowerCase() === componentId
+    );
+  }
+
   refreshData(resData){
     const res = resData.res
     let multiTerms
