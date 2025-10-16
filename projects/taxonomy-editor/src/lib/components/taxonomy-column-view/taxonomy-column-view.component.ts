@@ -48,6 +48,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
       debounceTime(700),
       distinctUntilChanged(),
     ).subscribe((ele: any) => {
+      this.startIndex = 0
       this.searchFilterData(ele)
     })
 
