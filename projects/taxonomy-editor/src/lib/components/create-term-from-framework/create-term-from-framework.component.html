@@ -1,17 +1,16 @@
-
 <div class="">
     <ng-container *ngIf="disableMultiCreate">
         <div class="flex flex-col flex-1 w-100 absolute loader-bg items-center pt-5 text-center">
-          <mat-spinner class="display-inline-block mb-5" [diameter]="50" [strokeWidth]="3"></mat-spinner>
-          <!-- <p>{{loaderMsg}}</p> -->
+            <mat-spinner class="display-inline-block mb-5" [diameter]="50" [strokeWidth]="3"></mat-spinner>
+            <!-- <p>{{loaderMsg}}</p> -->
         </div>
-      </ng-container>
-      <div class="dialogNew">
+    </ng-container>
+    <div class="dialogNew">
         <div class="flex items-center justify-between">
             <ng-container [ngTemplateOutlet]="modalTitle"></ng-container>
             <button type="button" mat-icon-button i18n-aria-label aria-label="action items"
-            [matMenuTriggerFor]="cardMenu" [matMenuTriggerData]="{'data':data}" class="action-btn">
-            <mat-icon>more_vert</mat-icon>
+                [matMenuTriggerFor]="cardMenu" [matMenuTriggerData]="{'data':data}" class="action-btn">
+                <mat-icon>more_vert</mat-icon>
             </button>
         </div>
         <div class="flex gap-4">
@@ -37,166 +36,166 @@
                         {{'Select Area'}}
                     </label>
                     <div class="mt-5">
-                        <mat-radio-group class="competency-group" aria-label="Select an option" formControlName="compArea">
-                            <mat-radio-button  [disabled]="data?.columnInfo?.code === 'subtheme' || data.openMode ==='view'" class="learning-section" [ngClass]="{'active-btn':item?.code === seletedCompetencyArea?.code}"
-                             *ngFor="let item of competencyArea?.children" [value]="item" [checked]="item?.code === seletedCompetencyArea?.code" (change)="clearSelectedThemes(item)">{{item.name}}</mat-radio-button>
+                        <mat-radio-group class="competency-group" aria-label="Select an option"
+                            formControlName="compArea">
+                            <mat-radio-button
+                                [disabled]="data?.columnInfo?.code === 'subtheme' || data.openMode ==='view'"
+                                class="learning-section"
+                                [ngClass]="{'active-btn':item?.code === seletedCompetencyArea?.code}"
+                                *ngFor="let item of competencyArea?.children" [value]="item"
+                                [checked]="item?.code === seletedCompetencyArea?.code"
+                                (change)="clearSelectedThemes(item)">{{item.name}}</mat-radio-button>
                         </mat-radio-group>
                     </div>
                 </div>
                 <ng-container *ngIf="data?.mode === 'multi-create'">
-                        <div class="flex flex-end mb-4" >
-                            <ng-container *ngIf="data?.columnInfo?.code !== 'subtheme'">
-                                <button type="button" class="mat-button flex items-center create-accordion-btn" *ngIf="data.mode === 'multi-create'" (click)="addCompetencyTheme()">
-                                    <mat-icon class="mr-2 mat-icon-custom ">add_circle_outline</mat-icon>
-                                    Add more
-                                    <!-- {{data.columnInfo.name}}  -->
-                                </button>
-                            </ng-container>
-                        </div>
-                        <mat-accordion formArrayName="compThemeFields">
-                            <mat-expansion-panel *ngFor="let field of competencyForm.get('compThemeFields')['controls']; let i = index; let isFirst = first" 
-                            class="margin-bottom-l comp-theme-fields" [formGroupName]="i" [expanded]="isFirst">               
-                             <mat-expansion-panel-header>
-                                    <mat-panel-title>
-                                        {{competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencyTheme?.value?.name}} 
-                                    </mat-panel-title>
-                                    <ng-container *ngIf="data?.columnInfo?.code !== 'subtheme'">
-                                        <button mat-button type="button" *ngIf="data.mode === 'multi-create'"
+                    <div class="flex flex-end mb-4">
+                        <ng-container *ngIf="data?.columnInfo?.code !== 'subtheme'">
+                            <button type="button" class="mat-button flex items-center create-accordion-btn"
+                                *ngIf="data.mode === 'multi-create'" (click)="addCompetencyTheme()">
+                                <mat-icon class="mr-2 mat-icon-custom ">add_circle_outline</mat-icon>
+                                Add more
+                                <!-- {{data.columnInfo.name}}  -->
+                            </button>
+                        </ng-container>
+                    </div>
+                    <mat-accordion formArrayName="compThemeFields">
+                        <mat-expansion-panel
+                            *ngFor="let field of competencyForm.get('compThemeFields')['controls']; let i = index; let isFirst = first"
+                            class="margin-bottom-l comp-theme-fields" [formGroupName]="i" [expanded]="isFirst">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    {{competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencyTheme?.value?.name}}
+                                </mat-panel-title>
+                                <ng-container *ngIf="data?.columnInfo?.code !== 'subtheme'">
+                                    <button mat-button type="button" *ngIf="data.mode === 'multi-create'"
                                         (click)="removeCompFields(i)">
                                         <mat-icon class="mat-icon-custom ">delete</mat-icon>
-                                        </button>
-                                    </ng-container>
-                                </mat-expansion-panel-header>
-                                <div class="input-column">
-                                    <div class="input-wrapper margin-top-s">
-                                        <div class="flex gap-4 ">
-                                            <div class="flex-1 flex-col">
-                                                <label for="name" class="margin-remove-bottom form-label required"
-                                                    aria-label="First name label">
-                                                    {{data.openMode !== 'view'? 'Select Competency Theme': 'Competency Theme Name'}}
-                                                </label>
-                                                <mat-form-field appearance="outline" class="flex-1">
-                                                    <mat-select [disabled]="data?.columnInfo?.code === 'subtheme' || data.openMode ==='view'" placeholder="Choose the Competency Theme" formControlName="competencyTheme">
-                                                        <ng-container >
-                                                            <ng-container >
-                                                                <mat-option *ngFor="let option of filteredallCompetencyTheme"  [value]="option" [disabled]="onDisableTheme(option) || data.openMode ==='view'" 
-                                                                (onSelectionChange)="OnThemeSelection($event, i, option)"  >{{option.name}}
-                                                                <ng-container *ngIf="option.refId">
-                                                                <span class="ml-2 ref-id">({{option.refId}})</span>
-                                                                </ng-container>
-                                                               </mat-option>
-                                                            </ng-container>
-                                                        </ng-container>
-                                                    </mat-select>
-                                                </mat-form-field>
-                                                <mat-error *ngIf="isTermExist">{{app_strings.alreadyExist}}</mat-error>
-                                            </div>
-                                        </div>
-            
-                                        <div class="flex-col mt-2">
-                                            <label for="fname" class="margin-remove-bottom form-label required"
-                                                i18n="First Name label|Label which explains the user to enter first name"
-                                                i18n-aria-label aria-label="First name label">
-
-                                                {{data.openMode !== 'view'? 'Select Competency Sub-Theme': 'Competency Sub-Theme Name'}}
-                                                
-                                            </label>
-                                            <!-- <mat-form-field appearance="outline" class="flex-1">
-                                                <mat-select placeholder="Choose the Competency Theme" formControlName="competencySubTheme">
-                                                    <mat-option *ngFor="let option of filteredallCompetencySubTheme" [value]="option">{{option.name}}</mat-option>
-                                                </mat-select>
-                                            </mat-form-field> -->
-                                            <!-- {{competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencySubTheme?.value |json}} -->
-                                            <mat-form-field appearance="outline" class="w-full field-height" >
-                                                <mat-select class=" placeholder-text" placeholder="Choose the Competency Sub-Theme"
-                                                  formControlName="competencySubTheme" multiple [disabled]="data.openMode ==='view'" panelClass="full-width-panel">
-                                                  <!-- [ngClass]="{'disbaledSelect':isHideData}" -->
-                                                  <mat-select-trigger >
-                                                    <mat-chip-list>
-                                                        <!-- -->
-                                                       
-                                                      <mat-chip *ngFor="let item of competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencySubTheme?.value" 
-                                                      (removed)="onTermRemove(item, i)" [disabled]="data.openMode ==='view'"
-                                                      [ngClass]="{'sub-theme-disable': data?.openMode ==='view'}"  [removable]="data?.openMode ==='view'? false: true">
-                                                        <span >{{ item.name }}</span>
-                                                        <mat-icon matChipRemove>cancel</mat-icon>
-                                                      </mat-chip>
-                                                    </mat-chip-list>
-                                                  </mat-select-trigger>
-                                                  <!-- {{competencyForm?.get('compThemeFields') |json}} -->
-                                                  <!-- <mat-optgroup>
-                                                    <mat-form-field floatLabel="never">
-                                                      <input #search autocomplete="off" placeholder="Search" (keydown.space)="$event.stopPropagation()"
-                                                        formControlName="competencySubTheme" matInput>
-                                                    </mat-form-field>
-                                                  </mat-optgroup> -->
-                                                  <mat-optgroup *ngIf="filteredallCompetencySubTheme.length === 0">
-                                                    <div>No results found!</div>
-                                                  </mat-optgroup>
-                                                  <!-- <mat-option *ngFor="let option of requestObjData.preferredProvider" [value]="option.providerName">{{option.providerName}}</mat-option> -->
-                                                  <ng-container *ngFor="let option of competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencyTheme?.value?.children">
-                                                        <mat-option 
-                                                        [value]="option" class="mat-option-list">{{option?.name}}
-                                                        <ng-container *ngIf="option?.refId">
-                                                         <span class="ml-2 ref-id">({{option?.refId}})</span>
-                                                        </ng-container>
-                                                     </mat-option>
-                                                  </ng-container>
-                                
-                                                </mat-select>
-                                                <!-- <mat-error *ngIf="requestForm.controls['providerText'].hasError('required')">
-                                                  Please select up to five preferred providers for the request.
-                                                </mat-error> -->
-                                              </mat-form-field>
-                                        </div>
-                                    </div>
-                                </div>
-                            </mat-expansion-panel>
-                        </mat-accordion>
-                        <footer class="actions">
-                            <button mat-raised-button color="default" type="reset"
-                                (click)="dialogClose('')">{{app_strings.cancel}}</button>
-                            <ng-container *ngIf="data?.mode === 'create' && data.openMode !=='view'">
-                                <button mat-raised-button color="primary" type="submit" cdkFocusInitial
-                                    [disabled]="competencyForm?.invalid" *ngIf="!disableCreate">{{app_strings.create}}</button>
-                            </ng-container>
-                            <ng-container *ngIf="data?.mode === 'multi-create' && data.openMode !=='view'">
-                                <ng-container *ngIf="data?.columnInfo?.code !== 'subtheme'">
-                                    <button mat-raised-button color="primary" type="button" cdkFocusInitial
-                                    [disabled]="competencyForm.invalid || disableMultiCreate" *ngIf="!disableCreate" (click)="multiCreate(competencyForm, data)">
-                                    {{app_strings.create}}
                                     </button>
                                 </ng-container>
-                                <ng-container *ngIf="data?.columnInfo?.code === 'subtheme'">
-                                    <!-- <ng-container *ngIf="competencyForm?.get('compThemeFields')['controls'][0]['controls']?.competencySubTheme?.value?.length;else updateBtn"> -->
-                                        <button mat-raised-button color="primary" type="button" cdkFocusInitial
-                                        [disabled]="competencyForm.invalid || disableMultiCreate" *ngIf="!disableCreate" (click)="multiCreateSubTheme(competencyForm, data)">
-                                        {{app_strings.update}}
-                                        </button>
-                                    <!-- </ng-container> -->
-                                    
-                                    <!-- <ng-template #updateBtn>
+                            </mat-expansion-panel-header>
+                            <div class="input-column">
+                                <div class="input-wrapper margin-top-s">
+                                    <div class="flex gap-4 ">
+                                        <div class="flex-1 flex-col">
+                                            <label for="name" class="margin-remove-bottom form-label required"
+                                                aria-label="First name label">
+                                                {{data.openMode !== 'view'? 'Select Competency Theme': 'Competency Theme
+                                                Name'}}
+                                            </label>
+                                            <mat-form-field appearance="outline" class="flex-1">
+                                                <mat-select
+                                                    [disabled]="data?.columnInfo?.code === 'subtheme' || data.openMode ==='view'"
+                                                    placeholder="Choose the Competency Theme"
+                                                    formControlName="competencyTheme">
+                                                    <mat-option *ngFor="let option of filteredallCompetencyTheme"
+                                                        [value]="option"
+                                                        [disabled]="onDisableTheme(option) || data.openMode ==='view'"
+                                                        (onSelectionChange)="OnThemeSelection($event, i, option)">{{option.name}}
+                                                        <ng-container *ngIf="option.refId">
+                                                            <span class="ml-2 ref-id">({{option.refId}})</span>
+                                                        </ng-container>
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-error *ngIf="isTermExist">{{app_strings.alreadyExist}}</mat-error>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-col mt-2">
+                                        <label for="fname" class="margin-remove-bottom form-label required"
+                                            i18n="First Name label|Label which explains the user to enter first name"
+                                            i18n-aria-label aria-label="First name label">
+
+                                            {{data.openMode !== 'view'? 'Select Competency Sub-Theme': 'Competency
+                                            Sub-Theme Name'}}
+
+                                        </label>
+                                        <!-- Dropdown selection -->
+                                        <mat-form-field appearance="outline" class="w-full field-height">
+                                            <mat-select class="placeholder-text"
+                                                placeholder="Choose the Competency Sub-Theme"
+                                                formControlName="competencySubTheme" multiple
+                                                [disabled]="data.openMode ==='view'" panelClass="full-width-panel">
+                                                <mat-optgroup *ngIf="filteredallCompetencySubTheme.length === 0">
+                                                    <div>No results found!</div>
+                                                </mat-optgroup>
+                                                <ng-container>
+                                                    <mat-option
+                                                        *ngFor="let option of competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencyTheme?.value?.children"
+                                                        [value]="option" class="mat-option-list">{{option?.name}}
+                                                        <ng-container *ngIf="option?.refId">
+                                                            <span class="ml-2 ref-id">({{option?.refId}})</span>
+                                                        </ng-container>
+                                                    </mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <!-- Selected items display -->
+                                        <mat-chip-list
+                                            *ngIf="competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencySubTheme?.value?.length > 0"
+                                            class="mb-2">
+                                            <mat-chip
+                                                *ngFor="let item of competencyForm?.get('compThemeFields')['controls'][i]['controls']?.competencySubTheme?.value"
+                                                (removed)="onTermRemove(item, i)" [disabled]="data.openMode ==='view'"
+                                                [ngClass]="{'sub-theme-disable': data?.openMode ==='view'}"
+                                                [removable]="data?.openMode ==='view'? false: true">
+                                                <span>{{ item.name }}</span>
+                                                <mat-icon matChipRemove>cancel</mat-icon>
+                                            </mat-chip>
+                                        </mat-chip-list>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                    <footer class="actions">
+                        <button mat-raised-button color="default" type="reset"
+                            (click)="dialogClose('')">{{app_strings.cancel}}</button>
+                        <ng-container *ngIf="data?.mode === 'create' && data.openMode !=='view'">
+                            <button mat-raised-button color="primary" type="submit" cdkFocusInitial
+                                [disabled]="competencyForm?.invalid"
+                                *ngIf="!disableCreate">{{app_strings.create}}</button>
+                        </ng-container>
+                        <ng-container *ngIf="data?.mode === 'multi-create' && data.openMode !=='view'">
+                            <ng-container *ngIf="data?.columnInfo?.code !== 'subtheme'">
+                                <button mat-raised-button color="primary" type="button" cdkFocusInitial
+                                    [disabled]="competencyForm.invalid || disableMultiCreate" *ngIf="!disableCreate"
+                                    (click)="multiCreate(competencyForm, data)">
+                                    {{app_strings.create}}
+                                </button>
+                            </ng-container>
+                            <ng-container *ngIf="data?.columnInfo?.code === 'subtheme'">
+                                <!-- <ng-container *ngIf="competencyForm?.get('compThemeFields')['controls'][0]['controls']?.competencySubTheme?.value?.length;else updateBtn"> -->
+                                <button mat-raised-button color="primary" type="button" cdkFocusInitial
+                                    [disabled]="competencyForm.invalid || disableMultiCreate" *ngIf="!disableCreate"
+                                    (click)="multiCreateSubTheme(competencyForm, data)">
+                                    {{app_strings.update}}
+                                </button>
+                                <!-- </ng-container> -->
+
+                                <!-- <ng-template #updateBtn>
                                         <button mat-raised-button color="primary" type="button" cdkFocusInitial
                                         [disabled]="competencyForm.invalid || disableMultiCreate" *ngIf="!disableCreate" (click)="multiCreateSubTheme(competencyForm, data)">
                                         {{app_strings.delete}}
                                         </button>
                                     </ng-template> -->
-                                </ng-container>
                             </ng-container>
-                            <ng-container *ngIf="data?.mode === 'edit' && data.openMode !=='view'">
-                                <button mat-raised-button color="primary" type="button" cdkFocusInitial
-                                    (click)="updateTermData(competencyForm, data)"
-                                    [disabled]="competencyForm?.invalid || disableUpdate"
-                                    *ngIf="!disableCreate">{{app_strings.update}}</button>
-                            </ng-container>
-                        </footer>
-                    </ng-container>
-                </form>
+                        </ng-container>
+                        <ng-container *ngIf="data?.mode === 'edit' && data.openMode !=='view'">
+                            <button mat-raised-button color="primary" type="button" cdkFocusInitial
+                                (click)="updateTermData(competencyForm, data)"
+                                [disabled]="competencyForm?.invalid || disableUpdate"
+                                *ngIf="!disableCreate">{{app_strings.update}}</button>
+                        </ng-container>
+                    </footer>
+                </ng-container>
+            </form>
         </ng-container>
-    
+
     </div>
-    
-    
+
+
     <!-- Title of the popup -->
     <ng-template #modalTitle>
         <!-- <ng-container *ngIf="data?.mode === 'create' || data?.mode === 'multi-create'">
@@ -218,9 +217,8 @@
 
 <mat-menu #cardMenu="matMenu" class="menu-sec">
     <ng-template matMenuContent let-rowData="data" let-cardRef="cardRef">
-        <button  (click)="deleteTheme()"
-            mat-menu-item name="channel-analytics-button" class="ws-mat-primary-text" i18n-aria-label
-            aria-label="Analytics">
+        <button (click)="deleteTheme()" mat-menu-item name="channel-analytics-button" class="ws-mat-primary-text"
+            i18n-aria-label aria-label="Analytics">
             <mat-icon>delete</mat-icon>
             <span>Delete</span>
         </button>
