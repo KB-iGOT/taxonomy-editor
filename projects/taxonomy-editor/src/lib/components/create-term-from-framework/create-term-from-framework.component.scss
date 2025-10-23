@@ -36,7 +36,7 @@
 }
 
 .dialog {
-    
+
     .mat-dialog-title{
         padding: 1em;
         margin-bottom: 0;
@@ -141,7 +141,7 @@
 }
 
 .flex-1 {
-    flex: 1 1 
+    flex: 1 1
 }
 
 .margin-remove-bottom {
@@ -312,12 +312,12 @@ input[type=number] {
     width: 100% !important;
   }
   ::ng-deep .full-width-panel {
-    width: 100% !important; 
-    min-width: 300px;        
+    width: 100% !important;
+    min-width: 300px;
   }
-  
+
   ::ng-deep .full-width-panel .mat-option {
-    white-space: normal;     
+    white-space: normal;
   }
 
   .btn-success {
@@ -409,7 +409,7 @@ input[type=number] {
   ::ng-deep .mat-form-field-disabled {
     .mat-form-field-outline  {
       background: rgba(235, 235, 235, 1) !important
-    } 
+    }
   }
 
   ::ng-deep .mat-form-field-infix {
@@ -700,8 +700,10 @@ input.mat-input-element {
 }
 
 ::ng-deep .mat-select-panel {
-  min-width: 103%!important;
-  margin-left:32px;
+  min-width: 103% !important;
+  margin-left: 32px;
+  max-height: 300px !important; // Set maximum height for the dropdown panel
+  overflow-y: auto !important; // Enable vertical scrolling
 }
 
 .loader-bg {
@@ -722,4 +724,39 @@ input.mat-input-element {
   opacity: .8 !important;
   cursor: none;
   filter: brightness(90%);
+}
+
+// Scrollable mat-option styles
+::ng-deep .mat-option {
+  height: 48px !important; // Set fixed height for each option
+  line-height: 48px !important; // Align text vertically
+  padding: 0 16px !important; // Add padding for better appearance
+  border-bottom: 1px solid #f0f0f0 !important; // Optional: add separator lines
+
+  &:hover {
+    background-color: #f5f5f5 !important; // Hover effect
+  }
+
+  &.mat-selected {
+    background-color: #e3f2fd !important; // Selected option background
+  }
+}
+
+// Custom scrollbar styling for better appearance
+::ng-deep .mat-select-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+::ng-deep .mat-select-panel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::ng-deep .mat-select-panel::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::ng-deep .mat-select-panel::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
