@@ -74,12 +74,12 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
           this.columnData = this.transform(this.termshafall)
           this.setColumnItems()
           if (this.columnData && this.columnData?.length) {
-            this.cardsCount.emit({ category: this.columnData[0].category, count: this.columnData.length })
+            this.cardsCount.emit({ category: this.columnData[0]?.category, count: this.columnData?.length })
           }
         }
       })
     }
-    this.connectorMapping = this.connectorService.connectorMap
+    this.connectorMapping = this.connectorService?.connectorMap
   }
 
   // receives toggle changes from child cards
@@ -89,9 +89,9 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
 
   isExists(e) {
     let temp
-    if (this.termshafall && this.termshafall.length) {
-      temp = this.termshafall.map(t => t.identifier)
-      return temp.includes(e.identifier)
+    if (this.termshafall && this.termshafall?.length) {
+      temp = this.termshafall.map(t => t?.identifier)
+      return temp.includes(e?.identifier)
     }
     return false
   }
@@ -100,37 +100,37 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     if (this.childSubscription) {
       this.childSubscription.unsubscribe()
     }
-    this.childSubscription = this.frameworkService.currentSelection.subscribe(e => {
-      console.log('currentSelection event', e, this.column.code)
+    this.childSubscription = this.frameworkService?.currentSelection.subscribe(e => {
+      // console.log('currentSelection event', e, this.column.code)
       if (!e) {
         return
-      } else if (e.type === this.column.code) {
-        const selectedTerm = { ...e.data, cardRef: e.cardRef }
+      } else if (e.type === this.column?.code) {
+        const selectedTerm = { ...e?.data, cardRef: e?.cardRef }
         if (e.isUpdate) {
           this.updateTaxonomyTerm.emit({ isSelected: true, selectedTerm, isUpdate: true })
         } else {
           this.updateTaxonomyTerm.emit({ isSelected: true, selectedTerm })
         }
         this.columnData = this.transform((this.columnData || []).map(item => {
-          item.selected = item.code === e.data.code
+          item.selected = item?.code === e?.data?.code
           return item
         }))
         this.setColumnItems()
-        this.setConnectors(e.cardRef, this.columnItems, 'SINGLE')
+        this.setConnectors(e?.cardRef, this.columnItems, 'SINGLE')
         return
       } else {
-        const next = this.frameworkService.getNextCategory(e.type)
-        if (next && next.code === this.column.code) {
+        const next = this.frameworkService.getNextCategory(e?.type)
+        if (next && next?.code === this.column?.code) {
           setTimeout(() => {
             this.setConnectors(
               e.cardRef,
-              next && next.index < this.column.index ? [] : this.columnItems,
+              next && next?.index < this.column?.index ? [] : this.columnItems,
               'ALL'
             )
           }, 100)
         }
 
-        if (next && next.index < this.column.index) {
+        if (next && next?.index < this.column?.index) {
           this.columnData = []
           this.setColumnItems()
         }
@@ -140,27 +140,27 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
     if (this.newTermSubscription) {
       this.newTermSubscription.unsubscribe()
     }
-    this.newTermSubscription = this.frameworkService.insertUpdateDeleteNotifier.subscribe(e => {
+    this.newTermSubscription = this.frameworkService?.insertUpdateDeleteNotifier.subscribe(e => {
       console.log('newTermSubscription ::', e)
       if (e && e.action) {
-        const next = this.frameworkService.getNextCategory(e.action)
+        const next = this.frameworkService.getNextCategory(e?.action)
         if (next) {
-          if (this.column.code === next.code && e.type === 'select') {
+          if (this.column?.code === next?.code && e?.type === 'select') {
             this.insertUpdateHandler(e, next)
           }
-          if (e.type === 'update') {
-            if (this.column.code === next.code && e.type === 'update') {
-              console.log('update event section')
-              const selectedParent = this.frameworkService.getPreviousCategory(e.action)
-              const selectedParentData = this.frameworkService.list.get(selectedParent.code)
-              const selectedParentCardRef = this.frameworkService.selectionList.get(selectedParent.code) &&
-                this.frameworkService.selectionList.get(selectedParent.code).cardRef
-              console.log('selectedParentCardRef', selectedParentCardRef)
+          if (e?.type === 'update') {
+            if (this.column?.code === next?.code && e?.type === 'update') {
+              // console.log('update event section')
+              const selectedParent = this.frameworkService.getPreviousCategory(e?.action)
+              const selectedParentData = this.frameworkService?.list.get(selectedParent?.code)
+              const selectedParentCardRef = this.frameworkService?.selectionList.get(selectedParent?.code) &&
+                this.frameworkService?.selectionList.get(selectedParent?.code).cardRef
+              // console.log('selectedParentCardRef', selectedParentCardRef)
               if (selectedParent) {
-                console.log('selectedParent', selectedParent)
-                this.frameworkService.currentSelection.next({
-                  type: selectedParent.code,
-                  data: selectedParentData.children[0],
+                // console.log('selectedParent', selectedParent)
+                this.frameworkService?.currentSelection.next({
+                  type: selectedParent?.code,
+                  data: selectedParentData?.children[0],
                   cardRef: selectedParentCardRef,
                   isUpdate: true
                 })
@@ -191,9 +191,9 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
         this.columnData = this.transform([...localTerms, ...(e.data.children || [])])
           .filter(x => x.category == this.column.code)
           .map(mer => {
-            this.column.children = this.column.children.map(col => { col.selected = false; return col })
+            this.column.children = this.column?.children?.map(col => { col.selected = false; return col })
             mer.selected = false
-            mer.children = ([...this.column.children.filter(x => x.code === mer.code).map(a => a.children)].shift() || [])
+            mer.children = ([...this.column?.children.filter(x => x?.code === mer?.code).map(a => a?.children)].shift() || [])
             return mer
           })
       }
@@ -239,16 +239,16 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   transform(value: any, sortBy = 'timeStamp'): any {
     if (!sortBy) {
       if (value) {
-        return value.slice().reverse()
+        return value?.slice().reverse()
       }
       return null
     } else {
       if (Array.isArray(value)) {
         return value.sort((a, b) => {
-          const timestampA = a.additionalProperties && a.additionalProperties.timeStamp ?
-            new Date(Number(a.additionalProperties.timeStamp)).getTime() : 0
-          const timestampB = b.additionalProperties && b.additionalProperties.timeStamp ?
-            new Date(Number(b.additionalProperties.timeStamp)).getTime() : 0
+          const timestampA = a?.additionalProperties && a?.additionalProperties?.timeStamp ?
+            new Date(Number(a?.additionalProperties?.timeStamp)).getTime() : 0
+          const timestampB = b?.additionalProperties && b?.additionalProperties?.timeStamp ?
+            new Date(Number(b?.additionalProperties?.timeStamp)).getTime() : 0
           return timestampB - timestampA
         })
       }
@@ -257,15 +257,15 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
 
   searchFilterData(ele: any) {
     const back = this.frameworkService.getPreviousCategory(this.column.code)
-    if (back && back.code) {
+    if (back && back?.code) {
       let backColumData = this.frameworkService.selectionList.get(back.code)
       if (backColumData.category) {
         this.frameworkService.removeOldLine()
         setTimeout(() => {
-          this.frameworkService.currentSelection.next({
-            type: backColumData.category,
+          this.frameworkService?.currentSelection.next({
+            type: backColumData?.category,
             data: backColumData,
-            cardRef: backColumData.cardRef
+            cardRef: backColumData?.cardRef
           })
         }, 200)
       }
@@ -289,34 +289,34 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
       const ids = columnItem.map((c, i) => {
         return this.column.code + 'Card' + (i + 1)
       })
-      this.connectorMapping['box' + (this.column.index - 1)] = {
+      this.connectorMapping['box' + (this.column?.index - 1)] = {
         source: elementClicked,
         lines: (ids || []).map(id => { return { target: id, line: '', targetType: 'id' } })
       }
       this.connectorService.updateConnectorsMap(this.connectorMapping)
       const connectionLines = this.connectorService._drawLine(
-        this.connectorMapping['box' + (this.column.index - 1)].source,
-        this.connectorMapping['box' + (this.column.index - 1)].lines,
+        this.connectorMapping['box' + (this.column?.index - 1)].source,
+        this.connectorMapping['box' + (this.column?.index - 1)].lines,
         null,
         '#box' + (this.column.index - 1),
         '#box' + this.column.index
       )
-      this.connectorMapping['box' + (this.column.index - 1)].lines = connectionLines
+      this.connectorMapping['box' + (this.column?.index - 1)].lines = connectionLines
     } else {
       const item = this.column.children.findIndex(c => c.selected) + 1
       if (this.column.index > 1) {
-        this.connectorMapping['box' + (this.column.index - 1)].lines = [
+        this.connectorMapping['box' + (this.column?.index - 1)].lines = [
           { target: elementClicked, line: '', targetType: 'element' }
         ]
         this.connectorService.updateConnectorsMap(this.connectorMapping)
         const connectionLines = this.connectorService._drawLine(
-          this.connectorMapping['box' + (this.column.index - 1)].source,
-          this.connectorMapping['box' + (this.column.index - 1)].lines,
+          this.connectorMapping['box' + (this.column?.index - 1)].source,
+          this.connectorMapping['box' + (this.column?.index - 1)].lines,
           null,
           '#box' + (this.column.index - 1),
           '#box' + this.column.index
         )
-        this.connectorMapping['box' + (this.column.index - 1)].lines = connectionLines
+        this.connectorMapping['box' + (this.column?.index - 1)].lines = connectionLines
       }
     }
     this.connectorService.updateConnectorsMap(this.connectorMapping)
@@ -330,7 +330,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
           const lines = this.connectorMapping[key].lines
           lines.forEach(async (element, index) => {
             if (element != currentElement && prevCol == key) {
-              await element.line && element.line.remove()
+              await element?.line && element?.line.remove()
               lines.splice(index, 1)
             }
           })
@@ -339,10 +339,10 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
 
         let count = currentIndex + 2
         let nextCol = `box${count}`
-        if (this.connectorMapping[nextCol] && this.connectorMapping[nextCol].lines && this.connectorMapping[nextCol].lines.length > 0) {
+        if (this.connectorMapping[nextCol] && this.connectorMapping[nextCol]?.lines && this.connectorMapping[nextCol]?.lines?.length > 0) {
           const lines = this.connectorMapping[nextCol].lines
           lines.forEach(async (element, index) => {
-            await element.line && element.line.remove()
+            await element?.line && element?.line.remove()
             lines.splice(index, 1)
           })
           this.connectorMapping[nextCol].lines = null
@@ -356,8 +356,8 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   }
 
   get showLoadMoreBtn(): boolean {
-    if (this.column && this.column.config && this.column.config.categoryDisplayName !== 'Organisation'
-      && this.column.name !== 'Organisation' && this.columnItems && this.columnItems.length > 0) {
+    if (this.column && this.column?.config && this.column?.config?.categoryDisplayName !== 'Organisation'
+      && this.column?.name !== 'Organisation' && this.columnItems && this.columnItems?.length > 0) {
       return true
     }
     return false
