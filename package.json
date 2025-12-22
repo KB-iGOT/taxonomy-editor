@@ -1,6 +1,6 @@
 {
   "name": "taxonomy",
-  "version": "0.0.2-cbrelease-4.8.29",
+  "version": "0.0.3-cbrelease-4.8.29",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --watch --proxy-config proxy/localhost.proxy.json -o",

@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  HostListener,
+  ElementRef,
+} from '@angular/core'
 import { NSFramework } from '../../models/framework.model'
 import { ApprovalService } from '../../services/approval.service'
 import { FrameworkService } from '../../services/framework.service'
@@ -16,22 +25,25 @@ import { ConforamtionPopupComponent } from '../conforamtion-popup/conforamtion-p
   styleUrls: ['./term-card.component.scss']
 })
 export class TermCardComponent implements OnInit, OnDestroy {
-  // @Input() data!: NSFramework.ITermCard
 
   private _data: NSFramework.ITermCard
-  isApprovalRequired: boolean = false
+
+  isApprovalRequired = false
   approvalList: Array<Card> = []
   heightLighted = []
-  app_strings: any = labels;
+  app_strings: any = labels
   loaded: any = {}
   isCompetencyArea: any
   environment: any
   subscription: any
+
+  // === GLOBAL TOGGLE STATE (comes from parent) ===
+  @Input() activeMenuCardId: string | null = null
+  @Output() activeMenuCardIdChange = new EventEmitter<string | null>()
+
   @Input()
   set data(value: any) {
     this._data = value
-    //  if(this._data)
-    //    this.createTimeline(this._data[0].id)
     this._data.children.highlight = false
   }
   get data(): any {
@@ -46,78 +58,109 @@ export class TermCardComponent implements OnInit, OnDestroy {
     private localConnectionService: LocalConnectionService,
     private approvalService: ApprovalService,
     public dialog: MatDialog,
-
+    private elementRef: ElementRef
   ) { }
 
   ngOnInit() {
     this.isApprovalRequired = this.localConnectionService.getConfigInfo().isApprovalRequired
-    // console.log(this._data)
     this.updateApprovalStatus()
-    this.subscription = this.frameworkService.insertUpdateDeleteNotifier.subscribe((e) => {
+    this.subscription = this.frameworkService.insertUpdateDeleteNotifier.subscribe(e => {
       if (e) {
         this.isCompetencyArea = e.action
       }
     })
-
-
     this.environment = this.frameworkService.getEnviroment()
+  }
 
+  // close panel when clicking outside this card
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement
+    if (!this.elementRef.nativeElement.contains(target)) {
+      this.closeMenu()
+    }
   }
 
   cardClicked(data: any, cardRef: any) {
-    if (data.category != 'subtheme') {
+    if (data.category !== 'subtheme') {
       this.frameworkService.cardClkData = data
       this.frameworkService.CurrentCardClk.next(data.category)
-      console.log('this.frameworkService.cardClkData', this.frameworkService.cardClkData)
     }
-    // this.data.selected = true
-    console.log('card clikc method')
     if (this.frameworkService.isLastColumn(this.data.category)) {
       return
     }
     this.isSelected.emit({ element: this.data.children, isSelected: !data.selected })
-    this.frameworkService.currentSelection.next({ type: this.data.category, data: data.children, cardRef })
+    this.frameworkService.currentSelection.next({
+      type: this.data.category,
+      data: data.children,
+      cardRef
+    })
   }
 
   handleProductClick(term, event) {
-    this.selectedCard.emit({ term: term, checked: event.checked })
+    this.selectedCard.emit({ term, checked: event.checked })
   }
 
   updateApprovalStatus() {
     const id = this._data.children.identifier
     this.approvalService.getUpdateList().subscribe((list: any) => {
       this.approvalList = list.map(item => item.identifier)
-      if (this.approvalList) {
-        if (this.approvalList.includes(id)) {
-          this._data.children.highlight = true
-        }
+      if (this.approvalList.includes(id)) {
+        this._data.children.highlight = true
       }
     })
   }
 
   getColor(indexClass: number, cardRef: any, property: string, data: any) {
-    let config = this.frameworkService.getConfig(data.category)
+    const config = this.frameworkService.getConfig(data.category)
     if (cardRef.classList.contains('selected') && property === 'bgColor') {
       return config.color
     }
     if (property === 'border') {
       let borderColor
-      if (cardRef.classList.contains((indexClass).toString())) {
-        borderColor = "8px solid" + config.color
+      if (cardRef.classList.contains(indexClass.toString())) {
+        borderColor = '8px solid' + config.color
       }
       return borderColor
     }
   }
 
+  // === TOGGLE BEHAVIOUR ON THREE DOTS ===
+  onThreeDotsClick(event: MouseEvent, cardRef: any) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    // select this card (your existing behaviour)
+    this.cardClicked(this.data, cardRef)
+    if (this.data.category === 'subtheme') {
+      const termCards = document.querySelectorAll('.term-card')
+      termCards.forEach(card => {
+        const element = card as HTMLElement
+        element.style.removeProperty('z-index')
+      })
+    }
+
+    const id = this.data.children.identifier
+    const nextId = this.activeMenuCardId === id ? null : id
+    this.activeMenuCardIdChange.emit(nextId)
+  }
+
+  closeMenu() {
+    if (this.activeMenuCardId !== null) {
+      this.activeMenuCardIdChange.emit(null)
+    }
+  }
 
   view(data: any, childrenData: any, index: any) {
+    this.closeMenu()
     let dialog: any
     const selectedTerms = this.frameworkService.getPreviousSelectedTerms(data.columnInfo.code)
     const nexColInfo = this.getNextCat(data)
     const nextCat = nexColInfo || data.columnInfo
+
     if (nextCat && this.environment && this.environment.frameworkType === 'MDO_DESIGNATION') {
       const nextNextCat = this.frameworkService.getNextCategory(nextCat.code)
-      const selectedTerms = this.frameworkService.getPreviousSelectedTerms(nextCat.code)
+      const selectedTerms2 = this.frameworkService.getPreviousSelectedTerms(nextCat.code)
       const colInfo = Array.from(this.frameworkService.list.values()).filter(l => l.code === nextCat.code)
       let nextColInfo = []
       if (nextNextCat && nextNextCat.code) {
@@ -134,15 +177,12 @@ export class TermCardComponent implements OnInit, OnDestroy {
           selectedparents: this.heightLighted,
           colIndex: nextCat.index,
           childrenData: data.children,
-          selectedParentTerms: selectedTerms
+          selectedParentTerms: selectedTerms2
         },
         width: '800px',
         panelClass: 'custom-dialog-container'
       })
-
-
-    }
-    else {
+    } else {
       dialog = this.dialog.open(CreateTermComponent, {
         data: {
           mode: 'view',
@@ -157,58 +197,19 @@ export class TermCardComponent implements OnInit, OnDestroy {
         panelClass: 'custom-dialog-container'
       })
     }
-    dialog.afterClosed().subscribe(res => {
-      if (!res) {
-        return
-      }
-      // if (res && res.created) {
-      //   this.showPublish = true
-      // }
-      // this.loaded[res.term.category] = false
-      // // wait
-      // const parentColumn = this.frameworkService.getPreviousCategory(res.term.category)
-      // res.parent = null
-      // if (parentColumn) {
-      //   res.parent = this.frameworkService.selectionList.get(parentColumn.code)
-      //   res.parent.children? res.parent.children.push(res.term) :res.parent['children'] = [res.term]
-      // }
-      // this.updateFinalList({ selectedTerm: res.term, isSelected: false, parentData: res.parent, colIndex:colIndex })
-    })
+    dialog.afterClosed().subscribe(() => { })
   }
+
   edit(data: any, childrenData: any, index: any, cardRef: any) {
+    this.closeMenu()
     let dialog: any
     const selectedTerms = this.frameworkService.getPreviousSelectedTerms(data.columnInfo.code)
     const nexColInfo = this.getNextCat(data)
     const nextCat = nexColInfo || data.columnInfo
 
     if (nextCat && this.environment && this.environment.frameworkType === 'MDO_DESIGNATION') {
-      // const nextNextCat = this.frameworkService.getNextCategory(nextCat.code)
-      // const selectedTerms = this.frameworkService.getPreviousSelectedTerms(nextCat.code)
-      // const colInfo = Array.from(this.frameworkService.list.values()).filter(l => l.code === nextCat.code )
-      // let nextColInfo = []
-      // if(nextNextCat && nextNextCat.code) {
-      //   nextColInfo = Array.from(this.frameworkService.list.values()).filter(l => l.code === nextNextCat.code )
-      // }
-      //   dialog = this.dialog.open(CreateTermFromFrameworkComponent, {
-      //     data: {
-      //       mode:'multi-create',
-      //       openMode: 'edit',
-      //       cardColInfo: this.data.columnInfo,
-      //       columnInfo: colInfo && colInfo.length ? colInfo[0] : [],
-      //       nextColInfo: nextColInfo && nextColInfo.length ? nextColInfo[0] : [],
-      //       frameworkId: this.frameworkService.getFrameworkId(),
-      //       selectedparents: this.heightLighted,
-      //       colIndex: nextCat.index,
-      //       childrenData: data.children,
-      //       selectedParentTerms: selectedTerms
-      //     },
-      //     width: '800px',
-      //     panelClass: 'custom-dialog-container'
-      //   })
-
       this.create(data, 'edit')
-    }
-    else {
+    } else {
       dialog = this.dialog.open(CreateTermComponent, {
         data: {
           mode: 'edit',
@@ -224,27 +225,19 @@ export class TermCardComponent implements OnInit, OnDestroy {
         panelClass: 'custom-dialog-container'
       })
     }
-    dialog.afterClosed().subscribe(res => {
-      if (!res) {
-        return
-      }
-      const responseData = {
-        res,
-        index: index.index,
-        data,
-        type: 'update',
-        cardRef: cardRef
-      }
-      // this.frameworkService.updateAfterAddOrEditSubject(responseData)
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'))
-      }, 100)
+    dialog?.afterClosed().subscribe(res => {
+      if (!res) return
+      const responseData = { res, index: index.index, data, type: 'update', cardRef }
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 100)
     })
   }
+
   create(data: any, mode?: string) {
+    this.closeMenu()
     const nexColInfo = this.getNextCat(data)
     const nextCat = nexColInfo || data.columnInfo
     const nextNextCat = this.frameworkService.getNextCategory(nextCat.code)
+
     if (nextCat) {
       const selectedTerms = this.frameworkService.getPreviousSelectedTerms(nextCat.code)
       const colInfo = Array.from(this.frameworkService.list.values()).filter(l => l.code === nextCat.code)
@@ -289,22 +282,12 @@ export class TermCardComponent implements OnInit, OnDestroy {
         })
       }
       dialog.afterClosed().subscribe(res => {
-        if (!res) {
-          return
-        }
-
-        const responseData = {
-          res,
-          index: nextCat.index,
-          data,
-          type: 'multi-create'
-        }
+        if (!res) return
+        const responseData = { res, index: nextCat.index, data, type: 'multi-create' }
         if (!(res && res.stopUpdate)) {
           this.frameworkService.updateAfterAddOrEditSubject(responseData)
         }
-        setTimeout(() => {
-          window.dispatchEvent(new Event('resize'))
-        }, 100)
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 100)
       })
     }
   }
@@ -312,17 +295,13 @@ export class TermCardComponent implements OnInit, OnDestroy {
   getNextCatName(data) {
     if (data && data.columnInfo && data.columnInfo.code) {
       const nextCat = this.frameworkService.getNextCategory(data.columnInfo.code)
-      if (nextCat && nextCat.code) {
-        console.log(nextCat.code)
-        return nextCat.code
-      }
+      return nextCat?.code
     }
   }
 
   getNextCat(data) {
     if (data && data.columnInfo && data.columnInfo.code) {
-      const nextCat = this.frameworkService.getNextCategory(data.columnInfo.code)
-      return nextCat
+      return this.frameworkService.getNextCategory(data.columnInfo.code)
     }
   }
 
@@ -331,38 +310,27 @@ export class TermCardComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe()
     }
   }
+
   delete(data: any) {
+    this.closeMenu()
     const dialogData = {
       dialogType: 'warning',
       dialogAction: 'retire',
       descriptions: [
         {
-          header: `Competency ${data.category === "subtheme" ? 'sub-theme' : 'theme'} will be deleted`,
+          header: `Competency ${data.category === 'subtheme' ? 'sub-theme' : 'theme'} will be deleted`,
           headerClass: 'flex items-center justify-center text-blue textBold',
-          messages: [
-            {
-              msgClass: 'mb-2 mt-2',
-              msg: `Do you want to proceed?`,
-            },
-          ],
-        },
+          messages: [{ msgClass: 'mb-2 mt-2', msg: `Do you want to proceed?` }]
+        }
       ],
       footerClass: 'items-center justify-center',
       buttons: [
-        {
-          btnText: 'No',
-          btnClass: 'btn-outline',
-          response: false,
-        },
-        {
-          btnText: 'Yes',
-          btnClass: 'btn-full-success',
-          response: true,
-        },
+        { btnText: 'No', btnClass: 'btn-outline', response: false },
+        { btnText: 'Yes', btnClass: 'btn-full-success', response: true }
       ],
       cardInfo: data
     }
-    let dialog = this.dialog.open(ConforamtionPopupComponent, {
+    const dialog = this.dialog.open(ConforamtionPopupComponent, {
       data: dialogData,
       autoFocus: false,
       width: '500px',
@@ -370,14 +338,8 @@ export class TermCardComponent implements OnInit, OnDestroy {
       maxHeight: '90vh',
       disableClose: true
     })
-    dialog.afterClosed().subscribe(_res => {
-
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'))
-      }, 100)
+    dialog.afterClosed().subscribe(() => {
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 100)
     })
-
-
   }
-
 }
