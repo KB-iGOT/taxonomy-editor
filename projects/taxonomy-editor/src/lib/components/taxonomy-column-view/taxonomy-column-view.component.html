@@ -1,26 +1,26 @@
 <ng-container *ngIf="column?.config?.showSearch">
     <div class="w-full sticky">
         <div class="search mb-2">
-            <div class=rsearch>
+            <div class="rsearch">
                 <!-- <ng-container *ngIf="column?.config?.showSearch"> -->
-                    <div class="sinput mat-field-rounded">
-                    <mat-icon class=" search-icon">search</mat-icon>
-                    <input type="search" [formControl]="searchValue"  placeholder="Search" #search>
+                <div class="sinput mat-field-rounded">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="search" [formControl]="searchValue" placeholder="Search" #search>
                     <button *ngIf="search.value" class="clear-btn flex" (click)="clearSearch()">
-                    <mat-icon class="">clear</mat-icon>
-                    </button>
-                    </div>
-                    
-                <!-- </ng-container> -->
+                        <mat-icon>clear</mat-icon>
+                    </button><!-- </ng-container> -->
+                </div>
             </div>
         </div>
     </div>
 </ng-container>
+
 <ng-container *ngIf="columnItems && columnItems.length > 0; else noDataTemplate;">
     <ng-container *ngFor="let child of columnItems; let j = index">
-        <div #cardEle id="{{column.code}}Card{{j+1}}" >
+        <div #cardEle id="{{column.code}}Card{{j+1}}">
             <lib-term-card
                 [data]="{'children': child, 'selected' : false, 'category':column.code, cardSubType: 'minimal', isViewOnly:false,'index':column.index, columnInfo: column}"
+                [activeMenuCardId]="activeMenuCardId" (activeMenuCardIdChange)="onActiveMenuChange($event)"
                 (isSelected)="updateSelection1($event)" (selectedCard)="selectedCard($event)">
             </lib-term-card>
         </div>
@@ -31,6 +31,8 @@
 </ng-template>
 
 <div class="w-full flex justify-center" *ngIf="showLoadMoreBtn">
-    <button (click)="loadMore()" class="mat-raised-button mat-button-base loadMore" [ngClass]="{'disablBtn': disableLoadButton}"
-    [disabled]="disableLoadButton">Load more...</button>
+    <button (click)="loadMore()" class="mat-raised-button mat-button-base loadMore"
+        [ngClass]="{'disablBtn': disableLoadButton}" [disabled]="disableLoadButton">
+        Load more...
+    </button>
 </div>
