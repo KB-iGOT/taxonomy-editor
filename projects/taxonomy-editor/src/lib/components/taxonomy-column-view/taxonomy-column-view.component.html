@@ -17,7 +17,7 @@
 
 <ng-container *ngIf="columnItems && columnItems.length > 0; else noDataTemplate;">
     <ng-container *ngFor="let child of columnItems; let j = index">
-        <div #cardEle id="{{column.code}}Card{{j+1}}">
+        <div #cardEle id="{{column.code}}Card{{j+1}}" data-identifier="{{child?.identifier}}">
             <lib-term-card
                 [data]="{'children': child, 'selected' : false, 'category':column.code, cardSubType: 'minimal', isViewOnly:false,'index':column.index, columnInfo: column}"
                 [activeMenuCardId]="activeMenuCardId" (activeMenuCardIdChange)="onActiveMenuChange($event)"

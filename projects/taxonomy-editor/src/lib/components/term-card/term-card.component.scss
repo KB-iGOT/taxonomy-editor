@@ -168,6 +168,11 @@
   z-index: 99 !important;
 }
 
+.custom-menu.menu-up {
+  top: auto !important;
+  bottom: calc(100% + 4px) !important;
+}
+
 .custom-menu-item {
   width: 100%;
   height: 1.8rem;

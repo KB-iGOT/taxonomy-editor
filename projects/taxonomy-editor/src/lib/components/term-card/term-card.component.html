@@ -70,7 +70,7 @@
         </div>
 
         <!-- Toggle panel: only open when this card id matches global activeMenuCardId -->
-        <div class="custom-menu" *ngIf="activeMenuCardId === data?.children?.identifier"
+        <div class="custom-menu" *ngIf="activeMenuCardId === data?.children?.identifier" [ngClass]="{'menu-up': menuUp}"
             (click)="$event.stopPropagation()">
             <button class="custom-menu-item" *ngIf="data?.columnInfo?.config?.enableAdd" (click)="create(data)">
                 <mat-icon class="custom-menu-icon">add</mat-icon>

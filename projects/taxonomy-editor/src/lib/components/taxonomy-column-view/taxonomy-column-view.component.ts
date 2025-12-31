@@ -53,7 +53,7 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
         this.searchFilterData(ele)
       })
 
-    if (this.column.index === 1) {
+    if (this.column?.index === 1) {
       this.approvalService.getUpdateList().subscribe((list: any) => {
         this.approvalTerm = list.filter(item => this.column.code === item.category)
         if (this.approvalTerm) {
@@ -85,6 +85,102 @@ export class TaxonomyColumnViewComponent implements OnInit, OnDestroy, OnChanges
   // receives toggle changes from child cards
   onActiveMenuChange(nextId: string | null) {
     this.activeMenuCardId = nextId
+    // when a card's menu was opened, ensure its host wrapper is visible in the scrollable area
+    if (nextId) {
+      // schedule measurement after Angular has a chance to render the menu
+      // use requestAnimationFrame for a single-frame delay, fallback to setTimeout
+      const doScroll = () => {
+        try {
+          let idx = this.columnItems.findIndex((c: any) => c && (c?.identifier === nextId || c?.children?.identifier === nextId))
+
+          // If item is not rendered due to slicing, try to expand view to include it
+          if (idx === -1) {
+            const overallIndex = this.filteredColumnItems.findIndex((c: any) => c && (c?.identifier === nextId || c?.children?.identifier === nextId))
+            if (overallIndex > -1) {
+              // expand currentLastIndex to include this item
+              this.currentLastIndex = Math.max(this.currentLastIndex, overallIndex + 1)
+              // re-render columnItems
+              this.setColumnItems()
+              // recompute idx in the newly rendered slice
+              idx = this.columnItems?.findIndex((c: any) => c && (c?.identifier === nextId || c?.children?.identifier === nextId))
+            }
+          }
+
+          let el: HTMLElement | null = null
+          if (idx > -1) {
+            const elId = `${this.column?.code}Card${idx + 1}`
+            el = document.getElementById(elId)
+          }
+          // fallback to query selector by identifier attribute (in case other code added it)
+          if (!el) {
+            el = document.querySelector(`[data-identifier="${nextId}"]`) as HTMLElement | null
+          }
+          if (!el) {
+            const possible = Array.from(document?.querySelectorAll('.term-card')) as HTMLElement[]
+            el = possible.find(p => p?.textContent && p?.textContent?.indexOf(nextId) > -1) || null
+          }
+          if (el) {
+            this.scrollElementIntoViewIfNeeded(el)
+          }
+        } catch (err) {
+          // ignore DOM errors
+        }
+      }
+      if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => requestAnimationFrame(doScroll))
+      } else {
+        setTimeout(doScroll, 50)
+      }
+    }
+  }
+
+  // Find nearest scrollable parent (overflow-y auto|scroll) or return window
+  private getScrollParent(node: HTMLElement | null): HTMLElement | Window {
+    let parent: any = node
+    while (parent && parent !== document?.body && parent !== document?.documentElement) {
+      const style = window.getComputedStyle(parent)
+      const overflowY = style?.overflowY
+      if ((overflowY === 'auto' || overflowY === 'scroll') && parent?.scrollHeight > parent?.clientHeight) {
+        return parent
+      }
+      parent = parent?.parentElement
+    }
+    return window
+  }
+
+  // Scroll the element into view within its nearest scroll container (or window) if it's not fully visible
+  private scrollElementIntoViewIfNeeded(el: HTMLElement) {
+    const scrollParent = this.getScrollParent(el?.parentElement)
+    // Prefer to measure the menu inside the card if present, to ensure the menu (Add button) is visible
+    const menuEl = el?.querySelector('.custom-menu') as HTMLElement | null
+    const targetRect = menuEl ? menuEl.getBoundingClientRect() : el.getBoundingClientRect()
+
+    if (scrollParent === window) {
+      const viewportHeight = window?.innerHeight || document?.documentElement?.clientHeight
+      // If menu bottom is below viewport bottom, or top is above, scroll window
+      if (targetRect?.bottom > viewportHeight || targetRect?.top < 0) {
+        const pad = 16
+        const desiredTop = window?.scrollY + targetRect?.top - pad
+        if (targetRect?.height >= viewportHeight) {
+          window.scrollTo({ top: desiredTop, behavior: 'smooth' })
+        } else {
+          const desiredBottom = window?.scrollY + targetRect?.bottom + pad - viewportHeight
+          const finalTop = Math.max(0, Math.min(desiredTop, desiredBottom))
+          window.scrollTo({ top: finalTop, behavior: 'smooth' })
+        }
+      }
+    } else {
+      const parent = scrollParent as HTMLElement
+      const parentRect = parent.getBoundingClientRect()
+      const pad = 12
+      if (targetRect?.bottom > parentRect?.bottom) {
+        const delta = targetRect?.bottom - parentRect?.bottom + pad
+        parent?.scrollTo({ top: parent?.scrollTop + delta, behavior: 'smooth' })
+      } else if (targetRect?.top < parentRect?.top) {
+        const delta = parentRect?.top - targetRect?.top + pad
+        parent.scrollTo({ top: Math.max(0, parent?.scrollTop - delta), behavior: 'smooth' })
+      }
+    }
   }
 
   isExists(e) {

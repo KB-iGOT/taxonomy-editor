@@ -36,6 +36,8 @@ export class TermCardComponent implements OnInit, OnDestroy {
   isCompetencyArea: any
   environment: any
   subscription: any
+  // when true, render menu above the card (flipped)
+  menuUp = false
 
   // === GLOBAL TOGGLE STATE (comes from parent) ===
   @Input() activeMenuCardId: string | null = null
@@ -143,11 +145,37 @@ export class TermCardComponent implements OnInit, OnDestroy {
     const id = this.data.children.identifier
     const nextId = this.activeMenuCardId === id ? null : id
     this.activeMenuCardIdChange.emit(nextId)
+
+    // schedule placement calculation after Angular renders the menu
+    const updatePlacement = () => {
+      try {
+        const native = this.elementRef?.nativeElement as HTMLElement | undefined
+        const menu = native?.querySelector('.custom-menu') as HTMLElement | null
+        if (!menu || !native) {
+          this.menuUp = false
+          return
+        }
+        const menuRect = menu.getBoundingClientRect()
+        const cardRect = native.getBoundingClientRect()
+        const viewportHeight = window?.innerHeight || document?.documentElement?.clientHeight
+        const spaceBelow = viewportHeight - cardRect?.bottom
+        const spaceAbove = cardRect?.top
+        this.menuUp = menuRect?.height > spaceBelow && spaceAbove > spaceBelow
+      } catch (err) {
+        this.menuUp = false
+      }
+    }
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => requestAnimationFrame(updatePlacement))
+    } else {
+      setTimeout(updatePlacement, 50)
+    }
   }
 
   closeMenu() {
     if (this.activeMenuCardId !== null) {
       this.activeMenuCardIdChange.emit(null)
+      this.menuUp = false
     }
   }
 
