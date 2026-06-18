@@ -208,6 +208,8 @@ export class TermCardComponent implements OnInit, OnDestroy {
           selectedParentTerms: selectedTerms2
         },
         width: '800px',
+        height: '500px',
+        maxHeight: 'calc(100vh - 32px)',
         panelClass: 'custom-dialog-container'
       })
     } else {
@@ -222,6 +224,8 @@ export class TermCardComponent implements OnInit, OnDestroy {
           selectedParentTerms: selectedTerms
         },
         width: '800px',
+        height: '500px',
+        maxHeight: 'calc(100vh - 32px)',
         panelClass: 'custom-dialog-container'
       })
     }
@@ -290,7 +294,7 @@ export class TermCardComponent implements OnInit, OnDestroy {
           },
           width: '800px',
           height: '500px',
-          position: { top: '50px' },
+          maxHeight: 'calc(100vh - 32px)',
           panelClass: 'custom-dialog-container'
         })
       } else {
@@ -305,7 +309,8 @@ export class TermCardComponent implements OnInit, OnDestroy {
             selectedParentTerms: selectedTerms
           },
           width: '800px',
-          position: { top: '50px' },
+          height: '500px',
+          maxHeight: 'calc(100vh - 32px)',
           panelClass: 'custom-dialog-container'
         })
       }
